@@ -9,6 +9,7 @@ package cz.muni.fi.pv168.airshipmanager;
 /**
  *
  * @author Marek
+ * @author Michal Štefánik 422237
  */
 public class AirshipManagerApp {
 
@@ -20,3 +21,21 @@ public class AirshipManagerApp {
     }
     
 }
+
+/*
+Differences to UML:
+
+A) AirshipManager
+1. add Airship returned value changed from void to boolean
+2. rentAnrship method removed
+3. getAirshipById attribute changed to long from int
+4. editAirship method removed
+
+B) ContractManager
+1. addContract returned value changed from void to boolean
+2. editContract method removed
+3. getEndDate method got a new attribute Contract c
+4. getContractById method introduced
+
+
+*/
