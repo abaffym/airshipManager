@@ -1,23 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.pv168.airshipmanager;
 
 import java.util.Date;
 
 /**
+ * This entity class represents contract. Contract has specific id, some start
+ * date, length, it also includes information about name of the client, airship,
+ * given discount and method of payment.
  *
  * @author Michal Štefánik 422237
+ * @author Marek Abaffy 422572
  */
 public class Contract {
+
     private long id;
     private Date startDate;
     private int length;
     private String nameOfClient;
-    private float discount;
     private Airship airship;
+    private float discount;
     private PaymentMethod paymentMethod;
 
     public long getId() {
@@ -75,6 +75,29 @@ public class Contract {
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
-    
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Contract other = (Contract) obj;
+        return this.id == other.id;
+    }
+
+    @Override
+    public String toString() {
+        return "Contract{" + "id=" + id + ", nameOfClient=" + nameOfClient + ", airship=" + airship + '}';
+    }
+
 }

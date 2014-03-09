@@ -1,15 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package cz.muni.fi.pv168.airshipmanager;
 
 /**
+ * This enum represents possible payment methods.
  *
  * @author Michal Štefánik 422237
+ * @author Marek Abaffy 422572
  */
 public enum PaymentMethod {
+
     CASH, CREDIT_CARD, DEBIT;
 }

@@ -1,31 +1,27 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package cz.muni.fi.pv168.airshipmanager;
 
 import java.util.Collection;
 
 /**
+ * This class implements AirshipManager
  *
  * @author Michal Štefánik 422237
+ * @author Marek Abaffy 422572
  */
 public class AirshipManagerImpl implements AirshipManager {
 
     @Override
-    public boolean addAirship(Airship a) {
+    public void addAirship(Airship airship) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean removeAirship(Airship a) {
+    public void removeAirship(Airship airship) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Airship getAirshipById(long id) {
+    public Airship getAirshipById(Long id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -43,5 +39,5 @@ public class AirshipManagerImpl implements AirshipManager {
     public boolean isRented(Airship a) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }
