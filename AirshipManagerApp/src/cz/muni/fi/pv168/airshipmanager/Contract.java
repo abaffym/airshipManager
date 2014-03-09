@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class Contract {
 
-    private long id;
+    private Long id;
     private Date startDate;
     private int length;
     private String nameOfClient;
@@ -20,11 +20,11 @@ public class Contract {
     private float discount;
     private PaymentMethod paymentMethod;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

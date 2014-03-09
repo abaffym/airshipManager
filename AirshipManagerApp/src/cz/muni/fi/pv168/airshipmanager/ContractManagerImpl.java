@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.airshipmanager;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 
@@ -15,6 +16,11 @@ public class ContractManagerImpl implements ContractManager {
     public void addContract(Contract c) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    @Override
+    public void editContract(Contract c) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     @Override
     public void removeContract(Contract c) {
@@ -22,7 +28,7 @@ public class ContractManagerImpl implements ContractManager {
     }
 
     @Override
-    public Contract getContractById(long id) {
+    public Contract getContractById(Long id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -32,17 +38,17 @@ public class ContractManagerImpl implements ContractManager {
     }
 
     @Override
-    public Collection<Contract> getAll() {
+    public Collection<Contract> getAllContracts() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Collection<Contract> getActive() {
+    public Collection<Contract> getActiveContracts() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public double getPrice(Contract c) {
+    public BigDecimal getPrice(Contract c) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168.airshipmanager;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 
@@ -19,11 +20,21 @@ public interface ContractManager {
      * assigned id.
      */
     public void addContract(Contract contract);
+    
+    /**
+     * Edits contract.
+     *
+     * @param contract contract to be created
+     *
+     * @throws IllegalArgumentException when contract is null or has already
+     * assigned id.
+     */
+    public void editContract(Contract contract);
 
     /**
      * Removes given contract.
      *
-     * @param contract contract to be removed
+     * @param contract updated contract
      * @throws IllegalArgumentException when contract or its id is null
      */
     public void removeContract(Contract contract);
@@ -35,7 +46,7 @@ public interface ContractManager {
      * @return contract with given id or null if contract does not exist
      * @throws IllegalArgumentException when given id is null
      */
-    public Contract getContractById(long id);
+    public Contract getContractById(Long id);
 
     /**
      * Gets contract of given airship.
@@ -51,14 +62,14 @@ public interface ContractManager {
      *
      * @return collection of all contracts
      */
-    public Collection<Contract> getAll();
+    public Collection<Contract> getAllContracts();
 
     /**
      * Gets all active contracts.
      *
      * @return collection of all active contracts
      */
-    public Collection<Contract> getActive();
+    public Collection<Contract> getActiveContracts();
 
     /**
      * Gets price of given contract.
@@ -66,7 +77,7 @@ public interface ContractManager {
      * @param contract contract to get price from
      * @return price of given contract
      */
-    public double getPrice(Contract contract);
+    public BigDecimal getPrice(Contract contract);
 
     /**
      * Gets end date of given contract.

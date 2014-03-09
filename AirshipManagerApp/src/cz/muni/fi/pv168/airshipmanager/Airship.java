@@ -1,5 +1,7 @@
 package cz.muni.fi.pv168.airshipmanager;
 
+import java.math.BigDecimal;
+
 /**
  * This entity class represents Airship. Airship has specific id, some name,
  * price and capacity.
@@ -11,7 +13,7 @@ public class Airship {
 
     private Long id;
     private String name;
-    private double pricePerDay;
+    private BigDecimal pricePerDay;
     private int capacity;
 
     public Long getId() {
@@ -30,11 +32,11 @@ public class Airship {
         this.name = name;
     }
 
-    public double getPricePerDay() {
+    public BigDecimal getPricePerDay() {
         return pricePerDay;
     }
 
-    public void setPricePerDay(double pricePerDay) {
+    public void setPricePerDay (BigDecimal pricePerDay) {
         this.pricePerDay = pricePerDay;
     }
 
@@ -67,10 +69,7 @@ public class Airship {
             return false;
         }
         final Airship other = (Airship) obj;
-        if (this.id != other.id) {
-            return false;
-        }
-        return true;
+        return this.id == other.id;
     }
 
 }

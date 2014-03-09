@@ -14,16 +14,23 @@ public interface AirshipManager {
      * @param airship airship to be created
      * @throws IllegalArgumentException when airship is null or has already
      * assigned id.
-     *
      */
     public void addAirship(Airship airship);
+
+    /**
+     * Edits airship.
+     *
+     * @param airship updated airship
+     * @throws IllegalArgumentException when airship is null, or it has null id.
+     */    
+    public void editAirship(Airship airship);
 
     /**
      * Removes given airship.
      *
      * @param airship airship to be removed
      * @throws IllegalArgumentException when airship or its id is null
-     */
+     */    
     public void removeAirship(Airship airship);
 
     /**
@@ -34,7 +41,14 @@ public interface AirshipManager {
      * @throws IllegalArgumentException when given id is null
      */
     public Airship getAirshipById(Long id);
-
+    
+    /**
+     * Gets all airships.
+     *
+     * @return collection of all airships
+     */
+    public Collection<Airship> getAllAirships();
+    
     /**
      * Gets all airships with higher capacity.
      *
@@ -42,7 +56,7 @@ public interface AirshipManager {
      * @return collection of airships with higher capacity than is given
      * @throws IllegalArgumentException if given capacity is less than 0
      */
-    public Collection<Airship> getAirshipByCapacity(int capacity);
+    public Collection<Airship> getAllAirshipsByCapacity(int capacity);
 
     /**
      * Gets all avaliable airships

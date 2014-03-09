@@ -1,0 +1,21 @@
+version 0.01
+
+ A) AirshipManager
+ 1. add Airship returned value changed from void to boolean
+ 2. rentAnrship method removed
+ 3. getAirshipById attribute changed to long from int
+ 4. editAirship method removed
+
+ B) ContractManager
+ 1. addContract returned value changed from void to boolean
+ 2. editContract method removed
+ 3. getEndDate method got a new attribute Contract c
+ 4. getContractById method introduced
+
+version 0.02
+
+changed id type to Long
+changed price type to BigDecimal
+added methods editAirship, getAllAirships, editContract
+renamed getAllAirshipsByCapacity, getAllContracts, getActiveContracts
+updated test for AirshipManagerImpl

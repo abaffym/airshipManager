@@ -16,6 +16,11 @@ public class AirshipManagerImpl implements AirshipManager {
     }
 
     @Override
+    public void editAirship(Airship airship) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public void removeAirship(Airship airship) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -26,7 +31,13 @@ public class AirshipManagerImpl implements AirshipManager {
     }
 
     @Override
-    public Collection<Airship> getAirshipByCapacity(int capacity) {
+    public Collection<Airship> getAllAirships() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+    }
+
+    @Override
+    public Collection<Airship> getAllAirshipsByCapacity(int capacity) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
