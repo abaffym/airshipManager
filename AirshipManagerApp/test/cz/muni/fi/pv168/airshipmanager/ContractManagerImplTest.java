@@ -38,11 +38,11 @@ public class ContractManagerImplTest {
     @Test
     public void testAddContract() {
         System.out.println("addContract test run");
-        contracts.addContract(new Contract());
+        int prevSize = contracts.getAllContracts().size();
         contracts.addContract(new Contract());
         contracts.addContract(new Contract());
         
-        assertEquals(3, contracts.getAllContracts().size());
+        assertEquals(contracts.getAllContracts().size()+2, contracts.getAllContracts().size());
         // TODO review the generated test code and remove the default call to fail.
         }
 
