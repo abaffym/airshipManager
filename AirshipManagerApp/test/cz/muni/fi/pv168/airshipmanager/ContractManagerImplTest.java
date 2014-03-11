@@ -42,7 +42,7 @@ public class ContractManagerImplTest {
         contracts.addContract(new Contract());
         contracts.addContract(new Contract());
         
-        assertEquals(contracts.getAllContracts().size()+2, contracts.getAllContracts().size());
+        assertEquals(prevSize+2, contracts.getAllContracts().size());
         // TODO review the generated test code and remove the default call to fail.
         }
 
