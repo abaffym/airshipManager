@@ -1,8 +1,8 @@
 package cz.muni.fi.pv168.airshipmanager;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * This class implements ComtractManager.
@@ -38,12 +38,12 @@ public class ContractManagerImpl implements ContractManager {
     }
 
     @Override
-    public Collection<Contract> getAllContracts() {
+    public List<Contract> getAllContracts() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Collection<Contract> getActiveContracts() {
+    public List<Contract> getActiveContracts() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

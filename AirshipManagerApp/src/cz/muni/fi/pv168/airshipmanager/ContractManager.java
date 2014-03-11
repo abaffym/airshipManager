@@ -1,8 +1,8 @@
 package cz.muni.fi.pv168.airshipmanager;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -62,14 +62,14 @@ public interface ContractManager {
      *
      * @return collection of all contracts
      */
-    public Collection<Contract> getAllContracts();
+    public List<Contract> getAllContracts();
 
     /**
      * Gets all active contracts.
      *
      * @return collection of all active contracts
      */
-    public Collection<Contract> getActiveContracts();
+    public List<Contract> getActiveContracts();
 
     /**
      * Gets price of given contract.

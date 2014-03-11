@@ -1,6 +1,6 @@
 package cz.muni.fi.pv168.airshipmanager;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * This class implements AirshipManager
@@ -31,18 +31,18 @@ public class AirshipManagerImpl implements AirshipManager {
     }
 
     @Override
-    public Collection<Airship> getAllAirships() {
+    public List<Airship> getAllAirships() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
     }
 
     @Override
-    public Collection<Airship> getAllAirshipsByCapacity(int capacity) {
+    public List<Airship> getAllAirshipsByCapacity(int capacity) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Collection<Airship> getFreeAirships() {
+    public List<Airship> getFreeAirships() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

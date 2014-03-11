@@ -2,6 +2,11 @@ package cz.muni.fi.pv168.airshipmanager;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -238,6 +243,26 @@ public class AirshipManagerImplTest {
      */
     @Test
     public void testGetAirshipByCapacity() {
+        
+    }
+   
+    @Test
+    public void testGetAllAirships() {
+        assertTrue(manager.getAllAirships().isEmpty());
+        
+        Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
+        Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
+        
+        manager.addAirship(airship);
+        manager.addAirship(airship2);
+        
+        List<Airship> expected = Arrays.asList(airship,airship2);
+        List<Airship> actual = manager.getAllAirships();
+        Collections.sort(actual, idComparator);
+        Collections.sort(expected, idComparator);
+        
+        assertEquals(expected, actual);
+        assertDeepEquals(expected, actual); 
     }
 
     /**
@@ -245,6 +270,7 @@ public class AirshipManagerImplTest {
      */
     @Test
     public void testGetFreeAirships() {
+
     }
 
     /**
@@ -261,6 +287,14 @@ public class AirshipManagerImplTest {
         assertEquals(expected.getPricePerDay(), actual.getPricePerDay());
     }
 
+    private void assertDeepEquals(List<Airship> expectedList, List<Airship> actualList) {
+        for (int i = 0; i < expectedList.size(); i++) {
+            Airship expected = expectedList.get(i);
+            Airship actual = actualList.get(i);
+            assertDeepEquals(expected, actual);
+        }
+    }
+
     private static Airship newAirship(String name, BigDecimal pricePerDay, int capacity) {
         Airship airship = new Airship();
         airship.setName(name);
@@ -268,5 +302,14 @@ public class AirshipManagerImplTest {
         airship.setCapacity(capacity);
         return airship;
     }
+
+    private static Comparator<Airship> idComparator = new Comparator<Airship>() {
+
+        @Override
+        public int compare(Airship o1, Airship o2) {
+            return Long.valueOf(o1.getId()).compareTo(Long.valueOf(o2.getId()));
+        }
+
+    };
 
 }

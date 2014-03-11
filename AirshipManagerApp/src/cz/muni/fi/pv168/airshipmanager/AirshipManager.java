@@ -1,6 +1,6 @@
 package cz.muni.fi.pv168.airshipmanager;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Michal Štefánik 422237
@@ -47,7 +47,7 @@ public interface AirshipManager {
      *
      * @return collection of all airships
      */
-    public Collection<Airship> getAllAirships();
+    public List<Airship> getAllAirships();
     
     /**
      * Gets all airships with higher capacity.
@@ -56,14 +56,14 @@ public interface AirshipManager {
      * @return collection of airships with higher capacity than is given
      * @throws IllegalArgumentException if given capacity is less than 0
      */
-    public Collection<Airship> getAllAirshipsByCapacity(int capacity);
+    public List<Airship> getAllAirshipsByCapacity(int capacity);
 
     /**
      * Gets all avaliable airships
      *
      * @return collection of airships which are currently avaliable
      */
-    public Collection<Airship> getFreeAirships();
+    public List<Airship> getFreeAirships();
 
     /**
      * Returns whether given airship is rented or not
