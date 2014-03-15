@@ -15,37 +15,43 @@ public class Airship {
     private String name;
     private BigDecimal pricePerDay;
     private int capacity;
-
-    public Long getId() {
-        return id;
+    
+    //setters
+    public Airship setId(Long id) {
+        this.id = id;
+        return this;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Airship setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Airship setPricePerDay(BigDecimal pricePerDay) {
+        this.pricePerDay = pricePerDay;
+        return this;
+    }
+
+    public Airship setCapacity(int capacity) {
+        this.capacity = capacity;
+        return this;
+    }
+    
+    //getters
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPricePerDay() {
         return pricePerDay;
     }
 
-    public void setPricePerDay (BigDecimal pricePerDay) {
-        this.pricePerDay = pricePerDay;
-    }
-
     public int getCapacity() {
         return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
     }
 
     @Override
