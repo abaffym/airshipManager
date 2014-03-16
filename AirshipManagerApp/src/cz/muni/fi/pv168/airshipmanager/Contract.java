@@ -20,60 +20,67 @@ public class Contract {
     private float discount;
     private PaymentMethod paymentMethod;
 
+    public Contract setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Contract setStartDate(Date startDate) {
+        this.startDate = startDate;
+        return this;
+    }
+
+    public Contract setLength(int length) {
+        this.length = length;
+        return this;
+    }
+
+    public Contract setNameOfClient(String nameOfClient) {
+        this.nameOfClient = nameOfClient;
+        return this;
+    }
+
+    public Contract setAirship(Airship airship) {
+        this.airship = airship;
+        return this;
+    }
+
+    public Contract setDiscount(float discount) {
+        this.discount = discount;
+        return this;
+    }
+
+    public Contract setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+        return this;
+    }
+    
     public Long getId() {
         return id;
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    
     public Date getStartDate() {
         return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
     }
 
     public int getLength() {
         return length;
     }
 
-    public void setLength(int length) {
-        this.length = length;
-    }
-
     public String getNameOfClient() {
         return nameOfClient;
-    }
-
-    public void setNameOfClient(String nameOfClient) {
-        this.nameOfClient = nameOfClient;
     }
 
     public float getDiscount() {
         return discount;
     }
 
-    public void setDiscount(float discount) {
-        this.discount = discount;
-    }
-
     public Airship getAirship() {
         return airship;
     }
 
-    public void setAirship(Airship airship) {
-        this.airship = airship;
-    }
-
     public PaymentMethod getPaymentMethod() {
         return paymentMethod;
-    }
-
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
     }
 
     @Override

@@ -7,6 +7,7 @@
 package cz.muni.fi.pv168.airshipmanager;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
 public class ContractManagerImplTest {
     private ContractManagerImpl contracts;
     private static final double APPX = 0.0001;
+    Date usedDate = new Date();
     
     public ContractManagerImplTest() {
     }
@@ -29,6 +31,10 @@ public class ContractManagerImplTest {
         c.setId(123l);
         c.setNameOfClient("Peter");
         contracts.addContract(c);
+        
+        //test date set
+        usedDate.setTime(Date.UTC(2014, 1, 1, 0, 0, 0));
+        
     }
 
 
@@ -84,5 +90,21 @@ public class ContractManagerImplTest {
         assertEquals( (c1.getDiscount()) * (c1.getAirship().getPricePerDay().doubleValue()) , expResult, APPX);
        // TODO review the generated test code and remove the default call to fail.
     }
-
+    @Test
+    public void testEditContract() {
+        System.out.println("editContract test run");
+        
+        Contract c1 = new Contract();
+        c1.setId(123l).setAirship(new Airship()).setDiscount(1.0f).setLength(10).setNameOfClient("Peter");
+        c1.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
+        contracts.addContract(c1);
+        
+        Contract c2 = new Contract();
+        c2.setId(123l).setAirship(new Airship()).setDiscount(0.8f).setLength(11).setNameOfClient("Pavol");
+        c2.setPaymentMethod(PaymentMethod.CREDIT_CARD).setStartDate(usedDate);
+        contracts.editContract(c2);
+        
+        assertTrue(contracts.getContractById(123l).equals(c2));
+        
+    }
 }
