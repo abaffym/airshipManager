@@ -1,7 +1,6 @@
 package cz.muni.fi.pv168.airshipmanager;
 
 import java.util.List;
-
 /**
  * @author Michal Štefánik 422237
  * @author Marek Abaffy 422572
@@ -39,6 +38,7 @@ public interface AirshipManager {
      * @param id if of requested airship
      * @return airship with given id or null if airship does not exist
      * @throws IllegalArgumentException when given id is null
+     * @throws java.sql.SQLException if data werent retrieved correctly
      */
     public Airship getAirshipById(Long id);
     

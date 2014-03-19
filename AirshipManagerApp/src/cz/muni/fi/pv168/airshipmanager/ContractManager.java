@@ -86,4 +86,8 @@ public interface ContractManager {
      * @return end date of given contract
      */
     public Date getEndDate(Contract contract);
+    
+    public List<Contract> getAllByAirship(Airship a);
+    
+    Contract getActiveByAirship(Airship a) 
 }

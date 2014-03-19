@@ -1,0 +1,31 @@
+Wed Mar 19 11:32:57 CET 2014 : Apache Derby Network Server - 10.8.3.0 - (1405108) started and ready to accept connections on port 1527
+----------------------------------------------------------------
+Wed Mar 19 11:32:57 CET 2014:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance a816c00e-0144-d9e6-ad61-fffff3f4e2fa 
+on database directory D:\Codes\MU_scripty\Java\pb168_projekt\AirshipManagerApp\DB\airshipDB  with class loader sun.misc.Launcher$AppClassLoader@231a6631 
+Loaded from file:/C:/Program%20Files/Java/jdk1.7.0_40/db/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_40-b43
+user.dir=C:\Program Files\Java\jdk1.7.0_40\db
+os.name=Windows 7
+os.arch=amd64
+os.version=6.1
+derby.system.home=D:\Codes\MU_scripty\Java\pb168_projekt\AirshipManagerApp\DB
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Wed Mar 19 11:33:05 CET 2014:
+Shutting down instance a816c00e-0144-d9e6-ad61-fffff3f4e2fa on database directory D:\Codes\MU_scripty\Java\pb168_projekt\AirshipManagerApp\DB\airshipDB with class loader sun.misc.Launcher$AppClassLoader@231a6631 
+Wed Mar 19 11:33:05 CET 2014 Thread[DRDAConnThread_4,5,main] (DATABASE = airshipDB), (DRDAID = {2}), Database 'airshipDB' shutdown.
+----------------------------------------------------------------
+Wed Mar 19 11:33:25 CET 2014:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance 6c44409f-0144-d9e6-ad61-fffff3f4e2fa 
+on database directory D:\Codes\MU_scripty\Java\pb168_projekt\AirshipManagerApp\DB\airshipDB  with class loader sun.misc.Launcher$AppClassLoader@231a6631 
+Loaded from file:/C:/Program%20Files/Java/jdk1.7.0_40/db/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_40-b43
+user.dir=C:\Program Files\Java\jdk1.7.0_40\db
+os.name=Windows 7
+os.arch=amd64
+os.version=6.1
+derby.system.home=D:\Codes\MU_scripty\Java\pb168_projekt\AirshipManagerApp\DB
+Database Class Loader started - derby.database.classpath=''
