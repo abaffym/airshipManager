@@ -87,7 +87,19 @@ public interface ContractManager {
      */
     public Date getEndDate(Contract contract);
     
+    /**
+     * Gets the list of contracts by specified airship
+     *
+     * @param a airship bound to returned contracts
+     * @return relevant contracts
+     */
     public List<Contract> getAllByAirship(Airship a);
     
-    Contract getActiveByAirship(Airship a) 
+    /**
+     * Gets active contract for specified airship.
+     *
+     * @param a airship whose contract is to be returned
+     * @return relevant contract, or null if specified airship has no active contracts
+     */
+    Contract getActiveByAirship(Airship a); 
 }
