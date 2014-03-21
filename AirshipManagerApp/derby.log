@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Fri Mar 21 03:09:48 CET 2014:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance a816c00e-0144-e266-bfd4-000005f994f0 
+on database directory memory:C:\Users\Marek\Documents\NetBeansProjects\AirshipManagerApp\AirshipManagerImplTest  with class loader sun.misc.Launcher$AppClassLoader@6ff3c5b5 
+Loaded from file:/C:/Program%20Files/Java/jdk1.7.0_40/db/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0-b132
+user.dir=C:\Users\Marek\Documents\NetBeansProjects\AirshipManagerApp
+os.name=Windows 8.1
+os.arch=amd64
+os.version=6.3
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

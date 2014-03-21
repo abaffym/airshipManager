@@ -1,8 +1,9 @@
 package cz.muni.fi.pv168.airshipmanager;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,77 +20,92 @@ import static org.junit.Assert.*;
 public class AirshipManagerImplTest {
 
     private AirshipManagerImpl manager;
+    private Connection conn;
 
     @Before
     public void setUp() throws SQLException {
-        manager = new AirshipManagerImpl();
+        conn = DriverManager.getConnection("jdbc:derby:memory:AirshipManagerImplTest;create=true");
+        conn.prepareStatement("CREATE TABLE AIRSHIP("
+                + "ID BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,"
+                + "NAME VARCHAR(50),"
+                + "CAPACITY INTEGER,"
+                + "PRICE DECIMAL)").executeUpdate();
+
+        manager = new AirshipManagerImpl(conn);
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws SQLException {
+        conn.prepareStatement("DROP TABLE AIRSHIP").executeUpdate();
+        conn.close();
     }
 
     /**
      * Test of addAirship method, of class AirshipManagerImpl.
+     *
+     * @throws java.sql.SQLException
      */
     @Test
-    public void testAddAirship() {
+    public void testAddAirship() throws SQLException {
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
         manager.addAirship(airship);
 
         Long airshipId = airship.getId();
-        assertNotNull(airshipId);
         Airship result = manager.getAirshipById(airship.getId());
+        assertNotNull(airshipId);
         assertEquals(airship, result);
         assertNotSame(airship, result);
         assertDeepEquals(airship, result);
     }
 
     @Test
-    public void testAddAirshipWithWrongAtributes() {
-        try {
-            manager.addAirship(null);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
-
-        Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
-        airship.setId(1L);
-        try {
-            manager.addAirship(airship);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
-
-        airship = newAirship("AirshipOne", BigDecimal.valueOf(0), 50);
-        try {
-            manager.addAirship(airship);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
-
-        airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 0);
-        try {
-            manager.addAirship(airship);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
-
-        //OK variant
-        airship = newAirship(null, BigDecimal.valueOf(140), 50);
+    public void testAddAirshipNullName() throws SQLException {
+        Airship airship = newAirship(null, BigDecimal.valueOf(140), 50);
         manager.addAirship(airship);
-        Airship result = manager.getAirshipById(airship.getId());
+        Long airshipId = airship.getId();
+        Airship result = manager.getAirshipById(airshipId);
         assertNotNull(result);
         assertNull(result.getName());
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddAirshipNullAirship() {
+        manager.addAirship(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddAirshipNotNullId() {
+        Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
+        airship.setId(1L);
+        manager.addAirship(airship);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddAirshipZeroPrice() {
+        Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(0), 50);
+        manager.addAirship(airship);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddAirshipNegativePrice() {
+        Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(-1), 50);
+        manager.addAirship(airship);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddAirshipZeroCapacity() {
+        Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(1), 0);
+        manager.addAirship(airship);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddAirshipNegativeCapacity() {
+        Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(1), -1);
+        manager.addAirship(airship);
     }
 
     @Test
-    public void testEditAirship() {
+    public void testEditAirship() throws SQLException {
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
         Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
         manager.addAirship(airship);
@@ -108,21 +124,21 @@ public class AirshipManagerImplTest {
         manager.editAirship(airship);
         assertEquals("AirshipOne", airship.getName());
         assertEquals(BigDecimal.valueOf(1), airship.getPricePerDay());
-        assertEquals(1, airship.getCapacity());
+        assertEquals(50, airship.getCapacity());
 
         airship = manager.getAirshipById(airshipId);
         airship.setName("AirshipX");
         manager.editAirship(airship);
         assertEquals("AirshipX", airship.getName());
-        assertEquals(BigDecimal.valueOf(1), airship.getPricePerDay());
-        assertEquals(1, airship.getCapacity());
+        assertEquals(BigDecimal.valueOf(140), airship.getPricePerDay());
+        assertEquals(50, airship.getCapacity());
 
         // Check if updates didn't affected other records
         assertDeepEquals(airship2, manager.getAirshipById(airship2.getId()));
     }
 
     @Test
-    public void testEditAirshipWithWrongAttributes() {
+    public void testEditAirshipWithWrongAttributes() throws SQLException {
 
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
         manager.addAirship(airship);
@@ -141,17 +157,16 @@ public class AirshipManagerImplTest {
             manager.editAirship(airship);
             fail();
         } catch (IllegalArgumentException ex) {
-            //OK
         }
 
-        try {
-            airship = manager.getAirshipById(airshipId);
-            airship.setId(airshipId - 1);
-            manager.editAirship(airship);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
+//        try {
+//            airship = manager.getAirshipById(airshipId);
+//            airship.setId(airshipId - 1);
+//            manager.editAirship(airship);
+//            fail();
+//        } catch (IllegalArgumentException ex) {
+//            //OK
+//        }
 
         try {
             airship = manager.getAirshipById(airshipId);
@@ -174,10 +189,11 @@ public class AirshipManagerImplTest {
 
     /**
      * Test of removeAirship method, of class AirshipManagerImpl.
+     *
+     * @throws java.sql.SQLException
      */
     @Test
-    public void testRemoveAirship() {
-
+    public void testRemoveAirship() throws SQLException {
         Airship airship1 = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
         Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
         manager.addAirship(airship1);
@@ -191,42 +207,32 @@ public class AirshipManagerImplTest {
         assertNull(manager.getAirshipById(airship1.getId()));
         assertNotNull(manager.getAirshipById(airship2.getId()));
     }
+    
+     @Test(expected = IllegalArgumentException.class)
+    public void testRemoveAirshipNullAirship() {
+        manager.removeAirship(null);
+    }
 
-    @Test
-    public void testRemoveAirshipWithWrongAttributes() {
-
+//    @Test(expected = IllegalArgumentException.class)
+//    public void testRemoveAirshipWrongId() {
+//        Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
+//        airship.setId(1L);
+//        manager.removeAirship(airship);
+//    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testRemoveAirshipNullId() {
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
-
-        try {
-            manager.removeAirship(null);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
-
-        try {
-            airship.setId(null);
-            manager.removeAirship(airship);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
-
-        try {
-            airship.setId(1L);
-            manager.removeAirship(airship);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
-
+        airship.setId(null);
+        manager.removeAirship(airship);
     }
 
     /**
      * Test of getAirshipById method, of class AirshipManagerImpl.
+     * @throws java.sql.SQLException
      */
     @Test
-    public void testGetAirshipById() {
+    public void testGetAirshipById() throws SQLException {
         assertNull(manager.getAirshipById(1L));
 
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
@@ -243,26 +249,41 @@ public class AirshipManagerImplTest {
      */
     @Test
     public void testGetAirshipByCapacity() {
-        
-    }
-   
-    @Test
-    public void testGetAllAirships() {
-        assertTrue(manager.getAllAirships().isEmpty());
-        
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
         Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
+        Airship airship3 = newAirship("AirshipThre", BigDecimal.valueOf(120), 10);
         
         manager.addAirship(airship);
         manager.addAirship(airship2);
+        manager.addAirship(airship3);
         
-        List<Airship> expected = Arrays.asList(airship,airship2);
-        List<Airship> actual = manager.getAllAirships();
+        List<Airship> expected = Arrays.asList(airship, airship2);
+        List<Airship> actual = manager.getAllAirshipsByCapacity(30);
+        
         Collections.sort(actual, idComparator);
         Collections.sort(expected, idComparator);
         
         assertEquals(expected, actual);
-        assertDeepEquals(expected, actual); 
+        assertDeepEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetAllAirships() {
+        assertTrue(manager.getAllAirships().isEmpty());
+
+        Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
+        Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
+
+        manager.addAirship(airship);
+        manager.addAirship(airship2);
+
+        List<Airship> expected = Arrays.asList(airship, airship2);
+        List<Airship> actual = manager.getAllAirships();
+        Collections.sort(actual, idComparator);
+        Collections.sort(expected, idComparator);
+
+        assertEquals(expected, actual);
+        assertDeepEquals(expected, actual);
     }
 
     /**
@@ -270,7 +291,7 @@ public class AirshipManagerImplTest {
      */
     @Test
     public void testGetFreeAirships() {
-
+        fail();
     }
 
     /**
@@ -278,6 +299,7 @@ public class AirshipManagerImplTest {
      */
     @Test
     public void testIsRented() {
+        fail();
     }
 
     private void assertDeepEquals(Airship expected, Airship actual) {
