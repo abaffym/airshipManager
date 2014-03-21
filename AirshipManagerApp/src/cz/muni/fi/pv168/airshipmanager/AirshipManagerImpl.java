@@ -80,14 +80,15 @@ public class AirshipManagerImpl implements AirshipManager {
             throw new IllegalArgumentException("Capacity is negative or zero");
         }
         
-        try(PreparedStatement st = connection.prepareStatement("INSERT INTO AIRSHIP ("
-                + "name, price, capacity) VALUES (?, ?, ?) WHERE ID = ?")) {
+        try(PreparedStatement st = connection.prepareStatement("UPDATE AIRSHIP SET "
+                + "name=?, price=?, capacity=? WHERE ID = ?")) {
             st.setString(1, airship.getName());
             st.setBigDecimal(2, airship.getPricePerDay());
             st.setInt(3, airship.getCapacity());
             st.setLong(4, airship.getId());
             
-            st.executeQuery();
+            st.executeUpdate();
+            
         } catch (SQLException ex) {
             Logger.getLogger(AirshipManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
