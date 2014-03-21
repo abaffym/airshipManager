@@ -1,6 +1,7 @@
 package cz.muni.fi.pv168.airshipmanager;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +18,6 @@ public interface ContractManager {
      * @param contract contract to be created
      *
      * @throws IllegalArgumentException when contract is null or has already
-     * assigned id.
      */
     public void addContract(Contract contract);
     

@@ -49,7 +49,6 @@ public class ContractManagerImplTest {
         contracts.addContract(new Contract());
         
         assertEquals(prevSize+2, contracts.getAllContracts().size());
-        // TODO review the generated test code and remove the default call to fail.
         }
 
     /**
@@ -88,7 +87,6 @@ public class ContractManagerImplTest {
         c1.setDiscount(0.85f);
         double expResult = 8.5;
         assertEquals( (c1.getDiscount()) * (c1.getAirship().getPricePerDay().doubleValue()) , expResult, APPX);
-       // TODO review the generated test code and remove the default call to fail.
     }
     @Test
     public void testEditContract() {

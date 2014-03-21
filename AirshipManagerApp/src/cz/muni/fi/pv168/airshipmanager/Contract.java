@@ -83,6 +83,27 @@ public class Contract {
         return paymentMethod;
     }
 
+    public void isValid() throws IllegalArgumentException  {
+        if(this == null){
+            throw new IllegalArgumentException("contract is null");
+        }
+        if(this.id == null){
+            throw new IllegalArgumentException("ID is null");
+        }
+        if(this.airship == null){
+            throw new IllegalArgumentException("Airship is null");
+        }
+        if(this.length <= 0){
+            throw new IllegalArgumentException("Contract length is null");
+        }
+        if(this.paymentMethod == null){
+            throw new IllegalArgumentException("Payment method is null");
+        }
+        if(this.startDate == null){
+            throw new IllegalArgumentException("Start Date is null");
+        }
+    }
+    
     @Override
     public int hashCode() {
         int hash = 5;
