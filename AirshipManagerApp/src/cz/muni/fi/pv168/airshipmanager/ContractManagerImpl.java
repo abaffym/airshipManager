@@ -96,7 +96,7 @@ public class ContractManagerImpl implements ContractManager {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-//    @Override
+    @Override
     public Contract getActiveByAirship(Airship a) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

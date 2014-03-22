@@ -90,11 +90,14 @@ public class Contract {
         if(this.id == null){
             throw new IllegalArgumentException("ID is null");
         }
+        if(this.id <= 0){
+            throw new IllegalArgumentException("ID is negative or zero");
+        }
         if(this.airship == null){
             throw new IllegalArgumentException("Airship is null");
         }
         if(this.length <= 0){
-            throw new IllegalArgumentException("Contract length is null");
+            throw new IllegalArgumentException("Contract length is negative or zero");
         }
         if(this.paymentMethod == null){
             throw new IllegalArgumentException("Payment method is null");

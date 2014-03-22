@@ -1,9 +1,6 @@
 package cz.muni.fi.pv168.airshipmanager;
 
-import java.awt.print.Book;
-import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -70,6 +67,9 @@ public class AirshipManagerImpl implements AirshipManager {
         if (airship.getId() == null) {
             throw new IllegalArgumentException("Id is null");
         }
+        if (airship.getId() < 1) {
+            throw new IllegalArgumentException("Id is negative or zero");
+        }
         if (airship.getPricePerDay() == null) {
             throw new IllegalArgumentException("Price is null");
         }
@@ -81,14 +81,13 @@ public class AirshipManagerImpl implements AirshipManager {
         }
         
         try(PreparedStatement st = connection.prepareStatement("UPDATE AIRSHIP SET "
-                + "name=?, price=?, capacity=? WHERE ID = ?")) {
+                + "name = ?, price = ?, capacity = ? WHERE ID = ?")) {
             st.setString(1, airship.getName());
             st.setBigDecimal(2, airship.getPricePerDay());
             st.setInt(3, airship.getCapacity());
             st.setLong(4, airship.getId());
             
             st.executeUpdate();
-            
         } catch (SQLException ex) {
             Logger.getLogger(AirshipManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -165,12 +164,17 @@ public class AirshipManagerImpl implements AirshipManager {
 
     @Override
     public List<Airship> getFreeAirships() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Airship> free = new ArrayList<>();
+        for(Airship airship : getAllAirships()) {
+            if (!isRented(airship)) free.add(airship);
+        }
+        return free;
     }
 
     @Override
-    public boolean isRented(Airship a) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean isRented(Airship airship) {
+        ContractManagerImpl cManager = new ContractManagerImpl(connection);
+        return (cManager.getActiveByAirship(airship) == null);
     }
 
     private Airship resultSetToAirship(ResultSet rs) throws SQLException {

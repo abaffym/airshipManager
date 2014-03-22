@@ -115,6 +115,7 @@ public class AirshipManagerImplTest {
         airship = manager.getAirshipById(airshipId);
         airship.setCapacity(1);
         manager.editAirship(airship);
+        airship = manager.getAirshipById(airshipId);
         assertEquals("AirshipOne", airship.getName());
         assertEquals(BigDecimal.valueOf(140), airship.getPricePerDay());
         assertEquals(1, airship.getCapacity());
@@ -122,16 +123,18 @@ public class AirshipManagerImplTest {
         airship = manager.getAirshipById(airshipId);
         airship.setPricePerDay(BigDecimal.valueOf(1));
         manager.editAirship(airship);
+        airship = manager.getAirshipById(airshipId);
         assertEquals("AirshipOne", airship.getName());
         assertEquals(BigDecimal.valueOf(1), airship.getPricePerDay());
-        assertEquals(50, airship.getCapacity());
+        assertEquals(1, airship.getCapacity());
 
         airship = manager.getAirshipById(airshipId);
         airship.setName("AirshipX");
         manager.editAirship(airship);
+        airship = manager.getAirshipById(airshipId);
         assertEquals("AirshipX", airship.getName());
-        assertEquals(BigDecimal.valueOf(140), airship.getPricePerDay());
-        assertEquals(50, airship.getCapacity());
+        assertEquals(BigDecimal.valueOf(1), airship.getPricePerDay());
+        assertEquals(1, airship.getCapacity());
 
         // Check if updates didn't affected other records
         assertDeepEquals(airship2, manager.getAirshipById(airship2.getId()));
@@ -157,16 +160,17 @@ public class AirshipManagerImplTest {
             manager.editAirship(airship);
             fail();
         } catch (IllegalArgumentException ex) {
+            //OK
         }
 
-//        try {
-//            airship = manager.getAirshipById(airshipId);
-//            airship.setId(airshipId - 1);
-//            manager.editAirship(airship);
-//            fail();
-//        } catch (IllegalArgumentException ex) {
-//            //OK
-//        }
+        try {
+            airship = manager.getAirshipById(airshipId);
+            airship.setId(airshipId - 1);
+            manager.editAirship(airship);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            //OK
+        }
 
         try {
             airship = manager.getAirshipById(airshipId);
@@ -291,7 +295,32 @@ public class AirshipManagerImplTest {
      */
     @Test
     public void testGetFreeAirships() {
-        fail();
+        ContractManagerImpl cManager = new ContractManagerImpl(conn) {};
+        Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
+        Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
+        Airship airship3 = newAirship("AirshipThre", BigDecimal.valueOf(120), 10);
+               
+        Contract contract = new Contract();
+        contract.setAirship(airship);
+        cManager.addContract(contract);
+        
+        List<Airship> expected = Arrays.asList(airship2, airship3);
+        List<Airship> actual = manager.getAllAirships();
+        
+        assertEquals(expected, actual);
+        assertDeepEquals(expected, actual);
+        
+        Contract contract2 = new Contract();
+        contract2.setAirship(airship2);
+        cManager.addContract(contract2);
+        
+        Contract contract3 = new Contract();
+        contract3.setAirship(airship);
+        cManager.addContract(contract3);
+        
+        actual = manager.getAllAirships();
+        
+        assertNotNull(actual);
     }
 
     /**
@@ -299,7 +328,19 @@ public class AirshipManagerImplTest {
      */
     @Test
     public void testIsRented() {
-        fail();
+        ContractManagerImpl cManager = new ContractManagerImpl(conn) {};
+        Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
+        Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
+        
+        Contract contract = new Contract();
+        contract.setAirship(airship);
+        Contract result = cManager.getActiveByAirship(airship);
+        assertNotNull(result);
+        assertEquals(airship, result.getAirship());
+        assertDeepEquals(airship, result.getAirship());
+        
+        result = cManager.getActiveByAirship(airship2);
+        assertNull(result);
     }
 
     private void assertDeepEquals(Airship expected, Airship actual) {
