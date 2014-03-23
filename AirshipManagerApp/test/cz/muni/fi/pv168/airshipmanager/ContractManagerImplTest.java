@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class ContractManagerImplTest {
     private ContractManagerImpl contracts;
     private static final double APPX = 0.0001;
-    Date usedDate = new Date();
+    Long usedDate;
     
     public ContractManagerImplTest() {
     }
@@ -33,7 +33,7 @@ public class ContractManagerImplTest {
         contracts.addContract(c);
         
         //test date set
-        usedDate.setTime(Date.UTC(2014, 1, 1, 0, 0, 0));
+        usedDate = Date.UTC(2014, 1, 1, 0, 0, 0);
         
     }
 

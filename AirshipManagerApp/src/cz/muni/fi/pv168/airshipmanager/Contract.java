@@ -13,7 +13,7 @@ import java.util.Date;
 public class Contract {
 
     private Long id;
-    private Date startDate;
+    private Long startDate;
     private int length;
     private String nameOfClient;
     private Airship airship;
@@ -25,7 +25,7 @@ public class Contract {
         return this;
     }
 
-    public Contract setStartDate(Date startDate) {
+    public Contract setStartDate(Long startDate) {
         this.startDate = startDate;
         return this;
     }
@@ -59,7 +59,7 @@ public class Contract {
         return id;
     }
     
-    public Date getStartDate() {
+    public Long getStartDate() {
         return startDate;
     }
 

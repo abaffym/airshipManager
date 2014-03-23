@@ -24,33 +24,33 @@ public class ContractManagerImpl implements ContractManager {
     public ContractManagerImpl(Connection connection) {
         this.connection = connection;
     }
-    
+
     @Override
-    public void addContract(Contract c){
+    public void addContract(Contract c) {
         c.isValid();
-        
-        try(PreparedStatement st = connection.prepareStatement("INSERT INTO CONTRACT ("+
-                "startDate, length, nameOfClient, airship, discount, paymentMethod)"+
-                "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)){
-            
-            st.setString(1, c.getStartDate().toString());
+
+        try (PreparedStatement st = connection.prepareStatement("INSERT INTO CONTRACT ("
+                + "startDate, length, nameOfClient, airship, discount, paymentMethod)"
+                + "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+
+            st.setLong(1, c.getStartDate());
             st.setInt(2, c.getLength());
             st.setString(3, c.getNameOfClient());
             st.setLong(4, c.getAirship().getId());
             st.setFloat(5, c.getDiscount());
             st.setString(6, c.getPaymentMethod().toString());
             st.execute();
-            
+
             //set SQL-generated ID for inserted contract 
             ResultSet rs = st.getGeneratedKeys();
             rs.next();
             c.setId(rs.getLong(1));
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
     }
-    
+
     @Override
     public void editContract(Contract c) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -68,7 +68,18 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public Contract getContractByAirship(Airship a) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Contract c = null;
+        try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE airship= ?")) {
+            st.setLong(1, a.getId());
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                c = buildContract(rs);
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return c;
     }
 
     @Override
@@ -100,6 +111,13 @@ public class ContractManagerImpl implements ContractManager {
     public Contract getActiveByAirship(Airship a) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
+
+    private Contract buildContract(ResultSet rs) throws SQLException {
+        Contract c = new Contract();
+        c.setId(rs.getLong("id")).setDiscount(rs.getFloat("discount")).setLength(rs.getInt("length"));
+        c.setNameOfClient(rs.getString("nameOfClient")).setPaymentMethod(PaymentMethod.valueOf(rs.getString("paymentMethod")));
+        c.setStartDate(rs.getLong("startDate"));
+       
+         return c;
+    }
 }
