@@ -33,7 +33,7 @@ public class ContractManagerImplTest {
     public void setUp() throws SQLException {
         //SQL
         conn = DriverManager.getConnection("jdbc:derby:memory:ContractManagerImplTest;create=true");
-        conn.prepareStatement("CREATE TABLE AIRSHIP("
+        conn.prepareStatement("CREATE TABLE CONTRACT("
                 + "id BIGINT NOT NULL PRIMARY KEY,"
                 + "startDate BIGINT,"
                 + "nameOfClient VARCHAR(50),"
@@ -50,7 +50,7 @@ public class ContractManagerImplTest {
     }
     @After
     public void tearDown() throws SQLException {
-        conn.prepareStatement("DROP TABLE AIRSHIP").executeUpdate();
+        conn.prepareStatement("DROP TABLE CONTRACT").executeUpdate();
         conn.close();
         
     }
