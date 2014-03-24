@@ -87,12 +87,6 @@ public class Contract {
         if(this == null){
             throw new IllegalArgumentException("contract is null");
         }
-        if(this.id == null){
-            throw new IllegalArgumentException("ID is null");
-        }
-        if(this.id <= 0){
-            throw new IllegalArgumentException("ID is negative or zero");
-        }
         if(this.airship == null){
             throw new IllegalArgumentException("Airship is null");
         }

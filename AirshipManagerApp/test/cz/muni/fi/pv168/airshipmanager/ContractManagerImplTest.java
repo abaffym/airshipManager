@@ -7,7 +7,11 @@
 package cz.muni.fi.pv168.airshipmanager;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Date;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -20,23 +24,36 @@ public class ContractManagerImplTest {
     private ContractManagerImpl contracts;
     private static final double APPX = 0.0001;
     Long usedDate;
+    Connection conn;
     
     public ContractManagerImplTest() {
     }
 
     @Before
-    public void setUp() {
-        contracts = new ContractManagerImpl();
-        Contract c = new Contract();
-        c.setId(123l);
-        c.setNameOfClient("Peter");
-        contracts.addContract(c);
+    public void setUp() throws SQLException {
+        //SQL
+        conn = DriverManager.getConnection("jdbc:derby:memory:ContractManagerImplTest;create=true");
+        conn.prepareStatement("CREATE TABLE AIRSHIP("
+                + "id BIGINT NOT NULL PRIMARY KEY,"
+                + "startDate BIGINT,"
+                + "nameOfClient VARCHAR(50),"
+                + "paymentMethod VARCHAR(12),"
+                + "airship BIGINT,"
+                + "discount DECIMAL,"
+                + "length INTEGER)").executeUpdate();
+        //
         
+        contracts = new ContractManagerImpl(conn);
         //test date set
         usedDate = Date.UTC(2014, 1, 1, 0, 0, 0);
         
     }
-
+    @After
+    public void tearDown() throws SQLException {
+        conn.prepareStatement("DROP TABLE AIRSHIP").executeUpdate();
+        conn.close();
+        
+    }
 
     /**
      * Test of addContract method, of class ContractManagerImpl.
@@ -44,9 +61,12 @@ public class ContractManagerImplTest {
     @Test
     public void testAddContract() {
         System.out.println("addContract test run");
+        
+        Contract newC = new Contract();
+        newC.setAirship(new Airship().setName("Testship")).setDiscount(1f).setLength(10).setNameOfClient("Zeppelin");
+        newC.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
         int prevSize = contracts.getAllContracts().size();
-        contracts.addContract(new Contract());
-        contracts.addContract(new Contract());
+        contracts.addContract(newC);
         
         assertEquals(prevSize+2, contracts.getAllContracts().size());
         }

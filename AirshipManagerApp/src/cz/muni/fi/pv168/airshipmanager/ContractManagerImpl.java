@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -84,7 +85,17 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public List<Contract> getAllContracts() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Contract> out = new ArrayList<>();
+        try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT")) {
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                System.out.println("ResultSet output: "+rs.getString("nameOfClient"));
+                out.add(buildContract(rs));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return out;
     }
 
     @Override
@@ -117,7 +128,7 @@ public class ContractManagerImpl implements ContractManager {
         c.setId(rs.getLong("id")).setDiscount(rs.getFloat("discount")).setLength(rs.getInt("length"));
         c.setNameOfClient(rs.getString("nameOfClient")).setPaymentMethod(PaymentMethod.valueOf(rs.getString("paymentMethod")));
         c.setStartDate(rs.getLong("startDate"));
-       
-         return c;
+
+        return c;
     }
 }
