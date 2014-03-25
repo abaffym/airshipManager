@@ -19,7 +19,8 @@ import java.util.logging.Logger;
  * @author Marek Abaffy 422572
  */
 public class ContractManagerImpl implements ContractManager {
-
+    
+    
     private Connection connection;
 
     public ContractManagerImpl(Connection connection) {

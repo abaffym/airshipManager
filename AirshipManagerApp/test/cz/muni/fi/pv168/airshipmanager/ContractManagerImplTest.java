@@ -26,6 +26,8 @@ public class ContractManagerImplTest {
     Long usedDate;
     Connection conn;
     
+    //edit format setter by: http://kore.fi.muni.cz/wiki/index.php/PV168/P%C5%99%C3%ADklad_objektov%C3%A9ho_n%C3%A1vrhu
+    
     public ContractManagerImplTest() {
     }
 
