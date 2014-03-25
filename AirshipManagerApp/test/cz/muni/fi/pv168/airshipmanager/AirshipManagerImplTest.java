@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import org.junit.After;
 import org.junit.Before;
@@ -21,6 +22,7 @@ public class AirshipManagerImplTest {
 
     private AirshipManagerImpl manager;
     private Connection conn;
+    long usedDate = Date.UTC(2014, 1, 1, 0, 0, 0);
 
     @Before
     public void setUp() throws SQLException {
@@ -299,9 +301,10 @@ public class AirshipManagerImplTest {
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
         Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
         Airship airship3 = newAirship("AirshipThre", BigDecimal.valueOf(120), 10);
-               
+        
         Contract contract = new Contract();
-        contract.setAirship(airship);
+        contract.setAirship(new Airship().setName("Testship")).setDiscount(1f).setLength(10).setNameOfClient("Zeppelin");
+        contract.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
         cManager.addContract(contract);
         
         List<Airship> expected = Arrays.asList(airship2, airship3);

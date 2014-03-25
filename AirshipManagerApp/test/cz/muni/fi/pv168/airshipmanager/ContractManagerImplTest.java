@@ -36,11 +36,11 @@ public class ContractManagerImplTest {
         //SQL
         conn = DriverManager.getConnection("jdbc:derby:memory:ContractManagerImplTest;create=true");
         conn.prepareStatement("CREATE TABLE CONTRACT("
-                + "id BIGINT NOT NULL PRIMARY KEY,"
+                + "id BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,"
                 + "startDate BIGINT,"
                 + "nameOfClient VARCHAR(50),"
                 + "paymentMethod VARCHAR(12),"
-                + "airship BIGINT,"
+                + "airshipId BIGINT,"
                 + "discount DECIMAL,"
                 + "length INTEGER)").executeUpdate();
         //
@@ -64,13 +64,16 @@ public class ContractManagerImplTest {
     public void testAddContract() {
         System.out.println("addContract test run");
         
-        Contract newC = new Contract();
-        newC.setAirship(new Airship().setName("Testship")).setDiscount(1f).setLength(10).setNameOfClient("Zeppelin");
-        newC.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
+        Contract expected = new Contract();
+        expected.setAirship(new Airship().setName("Testship").setId(1L)).setDiscount(1f).setLength(10).setNameOfClient("Zeppelin");
+        expected.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
         int prevSize = contracts.getAllContracts().size();
-        contracts.addContract(newC);
+        contracts.addContract(expected);
         
-        assertEquals(prevSize+2, contracts.getAllContracts().size());
+        Contract result = contracts.getContractById(1L);
+        
+        assertEquals(expected, result);
+        
         }
 
     /**
@@ -80,17 +83,19 @@ public class ContractManagerImplTest {
     public void testRemoveContract() {
         System.out.println("removeContract test run");
         int prevSize = contracts.getAllContracts().size();
-        Contract c1 = new Contract();
+        Contract expected = new Contract();
+        expected.setAirship(new Airship().setName("Testship").setId(1L)).setDiscount(1f).setLength(10).setNameOfClient("Zeppelin");
+        expected.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
         Contract c2 = new Contract();
-        contracts.addContract(c1);
-        contracts.removeContract(c1);
+        contracts.addContract(expected);
+        contracts.removeContract(expected);
         try{
             contracts.removeContract(c2);
             fail("Contract to have been removed was not found");
         } catch(IllegalArgumentException e) {
             //OK
         }
-        assertEquals(prevSize+1 ,contracts.getAllContracts().size());
+        assertEquals(null ,contracts.getContractById(expected.getId()));
     }
 
     /**
@@ -114,17 +119,17 @@ public class ContractManagerImplTest {
     public void testEditContract() {
         System.out.println("editContract test run");
         
-        Contract c1 = new Contract();
-        c1.setId(123l).setAirship(new Airship()).setDiscount(1.0f).setLength(10).setNameOfClient("Peter");
-        c1.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
-        contracts.addContract(c1);
+        Contract expected = new Contract();
+        expected.setId(123l).setAirship(new Airship()).setDiscount(1.0f).setLength(10).setNameOfClient("Peter");
+        expected.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
+        contracts.addContract(expected);
         
         Contract c2 = new Contract();
         c2.setId(123l).setAirship(new Airship()).setDiscount(0.8f).setLength(11).setNameOfClient("Pavol");
         c2.setPaymentMethod(PaymentMethod.CREDIT_CARD).setStartDate(usedDate);
         contracts.editContract(c2);
         
-        assertTrue(contracts.getContractById(123l).equals(c2));
+        assertEquals(expected, contracts.getContractById(123l));
         
     }
 }

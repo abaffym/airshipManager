@@ -1,13 +1,10 @@
 ----------------------------------------------------------------
-Mon Mar 24 09:53:53 CET 2014:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.3.0 - (1405108): instance a816c00e-0144-f34b-c5bb-000002f9da58 
-on database directory memory:D:\Codes\MU_scripty\Java\pb168_projekt\AirshipManagerApp\ContractManagerImplTest  with class loader sun.misc.Launcher$AppClassLoader@231a6631 
-Loaded from file:/C:/Program%20Files/Java/jdk1.7.0_40/db/lib/derby.jar
+Tue Mar 25 17:38:14 CET 2014:
+ Zavádění serveru Derby verze The Apache Software Foundation - Apache Derby - 10.8.2.2 - (1181258): instance a816c00e-0144-fa1b-4176-00000df98a78
+v adresáři databáze memory:/home/xstefan3/NetBeansProjects/AirshipManagerApp/ContractManagerImplTest  sun.misc.Launcher$AppClassLoader@9cc3baa 
+
 java.vendor=Oracle Corporation
-java.runtime.version=1.7.0_40-b43
-user.dir=D:\Codes\MU_scripty\Java\pb168_projekt\AirshipManagerApp
-os.name=Windows 7
-os.arch=amd64
-os.version=6.1
+java.runtime.version=1.7.0_25-b15
+user.dir=/home/xstefan3/NetBeansProjects/AirshipManagerApp
 derby.system.home=null
-Database Class Loader started - derby.database.classpath=''
+Byl spuštěn zavaděč třídy databáze - derby.database.classpath=''

@@ -19,8 +19,7 @@ import java.util.logging.Logger;
  * @author Marek Abaffy 422572
  */
 public class ContractManagerImpl implements ContractManager {
-    
-    
+
     private Connection connection;
 
     public ContractManagerImpl(Connection connection) {
@@ -32,7 +31,7 @@ public class ContractManagerImpl implements ContractManager {
         c.isValid();
 
         try (PreparedStatement st = connection.prepareStatement("INSERT INTO CONTRACT ("
-                + "startDate, length, nameOfClient, airship, discount, paymentMethod)"
+                + "startDate, length, nameOfClient, airshipId, discount, paymentMethod)"
                 + "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
 
             st.setLong(1, c.getStartDate());
@@ -60,18 +59,37 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public void removeContract(Contract c) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        c.isValid();
+        
+        try (PreparedStatement st = connection.prepareStatement("DELETE FROM CONTRACT WHERE id= ?")) {
+            st.setLong(1, c.getId());
+            st.execute();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     public Contract getContractById(Long id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Contract c = null;
+        try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE id= ?")) {
+            st.setLong(1, id);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                c = buildContract(rs);
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return c;
     }
 
     @Override
     public Contract getContractByAirship(Airship a) {
         Contract c = null;
-        try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE airship= ?")) {
+        try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE airshipId= ?")) {
             st.setLong(1, a.getId());
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
@@ -90,7 +108,7 @@ public class ContractManagerImpl implements ContractManager {
         try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT")) {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                System.out.println("ResultSet output: "+rs.getString("nameOfClient"));
+                //System.out.println("ResultSet output: "+rs.getString("nameOfClient"));
                 out.add(buildContract(rs));
             }
         } catch (SQLException ex) {
