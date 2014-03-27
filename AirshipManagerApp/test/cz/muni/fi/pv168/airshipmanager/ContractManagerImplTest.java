@@ -34,6 +34,8 @@ public class ContractManagerImplTest {
     @Before
     public void setUp() throws SQLException {
         //SQL
+        //!! Another table needs to be added to return Airship Id 
+        
         conn = DriverManager.getConnection("jdbc:derby:memory:ContractManagerImplTest;create=true");
         conn.prepareStatement("CREATE TABLE CONTRACT("
                 + "id BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,"

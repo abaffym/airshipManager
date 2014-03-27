@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,7 +40,7 @@ public class ContractManagerImpl implements ContractManager {
             st.setString(3, c.getNameOfClient());
             st.setLong(4, c.getAirship().getId());
             st.setFloat(5, c.getDiscount());
-            st.setString(6, c.getPaymentMethod().toString());
+            st.setString(6, c.getPaymentMethod().name());
             st.execute();
 
             //set SQL-generated ID for inserted contract 
@@ -54,7 +55,26 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public void editContract(Contract c) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(c == null){
+            throw new IllegalArgumentException("Contract in editAirship() is null");
+        } else {
+            c.isValid();
+        }
+        try (PreparedStatement st = connection.prepareStatement("UPDATE CONTRACT SET"
+                + "startDate = ?, length = ?, nameOfClient = ?, airshipId = ?, discount = ?, paymentMethod = ?"
+                + " WHERE ID = ?")){
+            st.setLong(1, c.getStartDate());
+            st.setInt(2, c.getLength());
+            st.setString(3, c.getNameOfClient());
+            st.setLong(4, c.getAirship().getId());
+            st.setFloat(5, c.getDiscount());
+            st.setString(6, c.getPaymentMethod().name());
+            
+            st.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     @Override
@@ -119,7 +139,20 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public List<Contract> getActiveContracts() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Contract> all = getAllContracts();
+        List<Contract> out = new ArrayList<>();
+        
+        Date actual = new Date();
+        Long actualDate = actual.getTime();
+        
+        for(Contract c:all){
+            Long endDate = c.getStartDate() + TimeUnit.MICROSECONDS.convert(c.getLength(), TimeUnit.DAYS);
+            if(endDate<actualDate){
+                out.add(c);
+            }
+        }
+        
+        return out;
     }
 
     @Override
