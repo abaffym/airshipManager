@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
  */
 public class ContractManagerImplTest {
     private ContractManagerImpl contracts;
+    private AirshipManagerImpl airships;
     private static final double APPX = 0.0001;
     Long usedDate;
     Connection conn;
@@ -45,9 +46,14 @@ public class ContractManagerImplTest {
                 + "airshipId BIGINT,"
                 + "discount DECIMAL,"
                 + "length INTEGER)").executeUpdate();
-        //
+        conn.prepareStatement("CREATE TABLE AIRSHIP("
+                + "ID BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,"
+                + "NAME VARCHAR(50),"
+                + "CAPACITY INTEGER,"
+                + "PRICE DECIMAL)").executeUpdate();
         
         contracts = new ContractManagerImpl(conn);
+        airships = new AirshipManagerImpl(conn);
         //test date set
         usedDate = Date.UTC(2014, 1, 1, 0, 0, 0);
         
@@ -55,6 +61,7 @@ public class ContractManagerImplTest {
     @After
     public void tearDown() throws SQLException {
         conn.prepareStatement("DROP TABLE CONTRACT").executeUpdate();
+        conn.prepareStatement("DROP TABLE AIRSHIP").executeUpdate();
         conn.close();
         
     }
@@ -84,12 +91,12 @@ public class ContractManagerImplTest {
     @Test
     public void testRemoveContract() {
         System.out.println("removeContract test run");
-        int prevSize = contracts.getAllContracts().size();
         Contract expected = new Contract();
         expected.setAirship(new Airship().setName("Testship").setId(1L)).setDiscount(1f).setLength(10).setNameOfClient("Zeppelin");
         expected.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
         Contract c2 = new Contract();
         contracts.addContract(expected);
+        int prevSize = contracts.getAllContracts().size();
         contracts.removeContract(expected);
         try{
             contracts.removeContract(c2);
@@ -98,6 +105,7 @@ public class ContractManagerImplTest {
             //OK
         }
         assertEquals(null ,contracts.getContractById(expected.getId()));
+        assertEquals(prevSize-1, contracts.getAllContracts().size());
     }
 
     /**
@@ -122,16 +130,29 @@ public class ContractManagerImplTest {
         System.out.println("editContract test run");
         
         Contract expected = new Contract();
-        expected.setId(123l).setAirship(new Airship()).setDiscount(1.0f).setLength(10).setNameOfClient("Peter");
+        Airship a = new Airship().setName("Testship").setPricePerDay(BigDecimal.valueOf(25)).setCapacity(12);
+        airships.addAirship(a);
+        expected.setAirship(a).setDiscount(1.0f).setLength(10).setNameOfClient("Peter");
         expected.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
         contracts.addContract(expected);
         
+        
         Contract c2 = new Contract();
-        c2.setId(123l).setAirship(new Airship()).setDiscount(0.8f).setLength(11).setNameOfClient("Pavol");
+        c2.setAirship(a).setDiscount(0.8f).setLength(11).setNameOfClient("Pavol");
         c2.setPaymentMethod(PaymentMethod.CREDIT_CARD).setStartDate(usedDate);
         contracts.editContract(c2);
         
-        assertEquals(expected, contracts.getContractById(123l));
+        assertDeepEquals(expected, contracts.getContractById(expected.getId()));
         
+    }
+    
+    private void assertDeepEquals(Contract expected, Contract actual){
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getAirship(), actual.getAirship());
+        assertEquals(expected.getDiscount(), actual.getDiscount(), 0.0001);
+        assertEquals(expected.getLength(), actual.getLength());
+        assertEquals(expected.getNameOfClient(), actual.getNameOfClient());
+        assertEquals(expected.getPaymentMethod(), actual.getPaymentMethod());
+        assertEquals(expected.getStartDate(), actual.getStartDate());
     }
 }
