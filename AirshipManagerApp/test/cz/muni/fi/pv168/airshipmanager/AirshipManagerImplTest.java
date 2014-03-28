@@ -1,18 +1,18 @@
 package cz.muni.fi.pv168.airshipmanager;
 
+import cz.muni.fi.pv168.common.DBUtils;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
+import javax.sql.DataSource;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -21,27 +21,30 @@ import static org.junit.Assert.*;
 public class AirshipManagerImplTest {
 
     private AirshipManagerImpl manager;
-    private Connection conn;
-    long usedDate = Date.UTC(2014, 1, 1, 0, 0, 0);
+    private DataSource ds;
+
+    private static DataSource prepareDataSource() throws SQLException {
+        BasicDataSource ds = new BasicDataSource();
+        ds.setUrl("jdbc:derby:memory:AirshipManagerImplTest;create=true");
+        return ds;
+    }
 
     @Before
     public void setUp() throws SQLException {
-        conn = DriverManager.getConnection("jdbc:derby:memory:AirshipManagerImplTest;create=true");
-        conn.prepareStatement("CREATE TABLE AIRSHIP("
-                + "ID BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,"
-                + "NAME VARCHAR(50),"
-                + "CAPACITY INTEGER,"
-                + "PRICE DECIMAL)").executeUpdate();
-
-        manager = new AirshipManagerImpl(conn);
+        ds = prepareDataSource();
+        DBUtils.executeSqlScript(ds, AirshipManager.class.getResource("createTables.sql"));
+        manager = new AirshipManagerImpl();
+        manager.setDataSource(ds);
     }
 
     @After
     public void tearDown() throws SQLException {
-        conn.prepareStatement("DROP TABLE AIRSHIP").executeUpdate();
-        conn.close();
+       DBUtils.executeSqlScript(ds, AirshipManager.class.getResource("dropTables.sql"));
     }
 
+    private java.sql.Date date(String date) {
+        return java.sql.Date.valueOf(date);
+    }
     /**
      * Test of addAirship method, of class AirshipManagerImpl.
      *
@@ -213,8 +216,8 @@ public class AirshipManagerImplTest {
         assertNull(manager.getAirshipById(airship1.getId()));
         assertNotNull(manager.getAirshipById(airship2.getId()));
     }
-    
-     @Test(expected = IllegalArgumentException.class)
+
+    @Test(expected = IllegalArgumentException.class)
     public void testRemoveAirshipNullAirship() {
         manager.removeAirship(null);
     }
@@ -225,7 +228,6 @@ public class AirshipManagerImplTest {
 //        airship.setId(1L);
 //        manager.removeAirship(airship);
 //    }
-    
     @Test(expected = IllegalArgumentException.class)
     public void testRemoveAirshipNullId() {
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
@@ -235,6 +237,7 @@ public class AirshipManagerImplTest {
 
     /**
      * Test of getAirshipById method, of class AirshipManagerImpl.
+     *
      * @throws java.sql.SQLException
      */
     @Test
@@ -258,17 +261,17 @@ public class AirshipManagerImplTest {
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
         Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
         Airship airship3 = newAirship("AirshipThre", BigDecimal.valueOf(120), 10);
-        
+
         manager.addAirship(airship);
         manager.addAirship(airship2);
         manager.addAirship(airship3);
-        
+
         List<Airship> expected = Arrays.asList(airship, airship2);
         List<Airship> actual = manager.getAllAirshipsByCapacity(30);
-        
+
         Collections.sort(actual, idComparator);
         Collections.sort(expected, idComparator);
-        
+
         assertEquals(expected, actual);
         assertDeepEquals(expected, actual);
     }
@@ -294,56 +297,80 @@ public class AirshipManagerImplTest {
 
     /**
      * Test of getFreeAirships method, of class AirshipManagerImpl.
+     *
+     * @throws java.sql.SQLException
      */
     @Test
-    public void testGetFreeAirships() {
-        ContractManagerImpl cManager = new ContractManagerImpl(conn) {};
+    public void testGetFreeAirships() throws SQLException {
+        ContractManagerImpl cManager = new ContractManagerImpl(ds.getConnection());
+
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
         Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
         Airship airship3 = newAirship("AirshipThre", BigDecimal.valueOf(120), 10);
-        
+
+        manager.addAirship(airship);
+        manager.addAirship(airship2);
+        manager.addAirship(airship3);
+
         Contract contract = new Contract();
-        contract.setAirship(new Airship().setName("Testship")).setDiscount(1f).setLength(10).setNameOfClient("Zeppelin");
-        contract.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
+        contract.setAirship(airship2)
+                .setLength(1)
+                .setNameOfClient("Client")
+                .setPaymentMethod(PaymentMethod.CASH)
+                .setStartDate(date("2014-01-01"));
         cManager.addContract(contract);
-        
-        List<Airship> expected = Arrays.asList(airship2, airship3);
-        List<Airship> actual = manager.getAllAirships();
-        
+
+        List<Airship> expected = Arrays.asList(airship, airship3);
+        List<Airship> actual = manager.getFreeAirships();
+
         assertEquals(expected, actual);
         assertDeepEquals(expected, actual);
-        
+
         Contract contract2 = new Contract();
-        contract2.setAirship(airship2);
+        contract2.setAirship(airship)
+                .setLength(1)
+                .setNameOfClient("Client")
+                .setPaymentMethod(PaymentMethod.CASH)
+                .setStartDate(date("2014-01-01"));
         cManager.addContract(contract2);
-        
+
         Contract contract3 = new Contract();
-        contract3.setAirship(airship);
+        contract3.setAirship(airship3)
+                .setLength(1)
+                .setNameOfClient("Client")
+                .setPaymentMethod(PaymentMethod.CASH)
+                .setStartDate(date("2014-01-01"));
         cManager.addContract(contract3);
-        
-        actual = manager.getAllAirships();
-        
+
+        actual = manager.getFreeAirships();
+
         assertNotNull(actual);
+        assertEquals(Arrays.asList(), actual);
     }
 
     /**
      * Test of isRented method, of class AirshipManagerImpl.
+     *
+     * @throws java.sql.SQLException
      */
     @Test
-    public void testIsRented() {
-        ContractManagerImpl cManager = new ContractManagerImpl(conn) {};
+    public void testIsRented() throws SQLException {
+        ContractManagerImpl cManager = new ContractManagerImpl(ds.getConnection());
+
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
         Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
-        
+        airship.setId(1L);
+        airship2.setId(2L);
         Contract contract = new Contract();
-        contract.setAirship(airship);
-        Contract result = cManager.getActiveByAirship(airship);
-        assertNotNull(result);
-        assertEquals(airship, result.getAirship());
-        assertDeepEquals(airship, result.getAirship());
-        
-        result = cManager.getActiveByAirship(airship2);
-        assertNull(result);
+        contract.setAirship(airship)
+                .setLength(1)
+                .setNameOfClient("Client")
+                .setPaymentMethod(PaymentMethod.CASH)
+                .setStartDate(date("2014-01-01"));
+        cManager.addContract(contract);
+
+        assertTrue(manager.isRented(airship));
+        assertFalse(manager.isRented(airship2));
     }
 
     private void assertDeepEquals(Airship expected, Airship actual) {
@@ -369,13 +396,12 @@ public class AirshipManagerImplTest {
         return airship;
     }
 
-    private static Comparator<Airship> idComparator = new Comparator<Airship>() {
+    private static final Comparator<Airship> idComparator = new Comparator<Airship>() {
 
         @Override
         public int compare(Airship o1, Airship o2) {
-            return Long.valueOf(o1.getId()).compareTo(Long.valueOf(o2.getId()));
+            return o1.getId().compareTo(o2.getId());
         }
-
     };
 
 }

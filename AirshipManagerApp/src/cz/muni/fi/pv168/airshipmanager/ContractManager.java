@@ -1,7 +1,6 @@
 package cz.muni.fi.pv168.airshipmanager;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -49,15 +48,6 @@ public interface ContractManager {
     public Contract getContractById(Long id);
 
     /**
-     * Gets contract of given airship.
-     *
-     * @param airship airship of requested contract
-     * @return contract with given airship or null if contract does not exist
-     * @throws IllegalArgumentException when given airship is null
-     */
-    public Contract getContractByAirship(Airship airship);
-
-    /**
      * Gets all contracts.
      *
      * @return collection of all contracts
@@ -90,18 +80,19 @@ public interface ContractManager {
     /**
      * Gets the list of contracts by specified airship
      *
-     * @param a airship bound to returned contracts
+     * @param airship airship bound to returned contracts
      * @return relevant contracts
      */
-    public List<Contract> getAllByAirship(Airship a);
+    public List<Contract> getAllByAirship(Airship airship);
     
     /**
-     * Gets active contract for specified airship.
+     * Gets contract of given airship.
      *
-     * @param a airship whose contract is to be returned
-     * @return relevant contract, or null if specified airship has no active contracts
+     * @param airship airship of requested contract
+     * @return contract with given airship or null if contract does not exist
+     * @throws IllegalArgumentException when given airship is null
      */
-    Contract getActiveByAirship(Airship a); 
+    Contract getActiveByAirship(Airship airship); 
 }
 
 

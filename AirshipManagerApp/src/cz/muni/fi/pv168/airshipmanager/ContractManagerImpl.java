@@ -7,8 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,29 +28,28 @@ public class ContractManagerImpl implements ContractManager {
 
     public ContractManagerImpl(Connection connection) {
         this.connection = connection;
-        airships = new AirshipManagerImpl(connection);
+        airships = new AirshipManagerImpl();
     }
 
     @Override
-    public void addContract(Contract c) {
-        c.isValid();
+    public void addContract(Contract contract) {
+        contract.isValid();
 
         try (PreparedStatement st = connection.prepareStatement("INSERT INTO CONTRACT ("
                 + "startDate, length, nameOfClient, airshipId, discount, paymentMethod)"
                 + "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
 
-            st.setLong(1, c.getStartDate());
-            st.setInt(2, c.getLength());
-            st.setString(3, c.getNameOfClient());
-            st.setLong(4, c.getAirship().getId());
-            st.setFloat(5, c.getDiscount());
-            st.setString(6, c.getPaymentMethod().name());
+            st.setDate(1, contract.getStartDate());
+            st.setInt(2, contract.getLength());
+            st.setString(3, contract.getNameOfClient());
+            st.setLong(4, contract.getAirship().getId());
+            st.setFloat(5, contract.getDiscount());
+            st.setString(6, contract.getPaymentMethod().name());
             st.execute();
 
-            //set SQL-generated ID for inserted contract 
-            ResultSet rs = st.getGeneratedKeys();
-            rs.next();
-            c.setId(rs.getLong(1));
+            ResultSet keyRS = st.getGeneratedKeys();
+            keyRS.next();
+            contract.setId(keyRS.getLong(1));
 
         } catch (SQLException ex) {
             Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -56,21 +57,21 @@ public class ContractManagerImpl implements ContractManager {
     }
 
     @Override
-    public void editContract(Contract c) {
-        if (c == null) {
+    public void editContract(Contract contract) {
+        if (contract == null) {
             throw new IllegalArgumentException("Contract in editAirship() is null");
         } else {
-            c.isValid();
+            contract.isValid();
         }
         try (PreparedStatement st = connection.prepareStatement("UPDATE CONTRACT SET"
                 + " startDate = ?, length = ?, nameOfClient = ?, airshipId = ?, discount = ?, paymentMethod = ?"
                 + " WHERE ID = ?")) {
-            st.setLong(1, c.getStartDate());
-            st.setInt(2, c.getLength());
-            st.setString(3, c.getNameOfClient());
-            st.setLong(4, c.getAirship().getId());
-            st.setFloat(5, c.getDiscount());
-            st.setString(6, c.getPaymentMethod().name());
+            st.setDate(1, contract.getStartDate());
+            st.setInt(2, contract.getLength());
+            st.setString(3, contract.getNameOfClient());
+            st.setLong(4, contract.getAirship().getId());
+            st.setFloat(5, contract.getDiscount());
+            st.setString(6, contract.getPaymentMethod().name());
 
             st.executeUpdate();
         } catch (SQLException ex) {
@@ -80,11 +81,11 @@ public class ContractManagerImpl implements ContractManager {
     }
 
     @Override
-    public void removeContract(Contract c) {
-        c.isValid();
+    public void removeContract(Contract contract) {
+        contract.isValid();
 
-        try (PreparedStatement st = connection.prepareStatement("DELETE FROM CONTRACT WHERE id= ?")) {
-            st.setLong(1, c.getId());
+        try (PreparedStatement st = connection.prepareStatement("DELETE FROM CONTRACT WHERE Id= ?")) {
+            st.setLong(1, contract.getId());
             st.execute();
 
         } catch (SQLException ex) {
@@ -94,131 +95,157 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public Contract getContractById(Long id) {
-        Contract c = null;
+        Contract contract = null;
         try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE id= ?")) {
             st.setLong(1, id);
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
-                c = buildContract(rs);
+                contract = resultSetToContract(rs);
             }
-
         } catch (SQLException ex) {
             Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return c;
+        return contract;
     }
 
     @Override
-    public Contract getContractByAirship(Airship a) {
-        Contract c = null;
+    public Contract getActiveByAirship(Airship airship) {
+        Contract contract = null;
         try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE airshipId= ?")) {
-            st.setLong(1, a.getId());
+            st.setLong(1, airship.getId());
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
-                c = buildContract(rs);
+                contract = resultSetToContract(rs);
             }
-
         } catch (SQLException ex) {
             Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return c;
+        return contract;
     }
 
     @Override
     public List<Contract> getAllContracts() {
-        List<Contract> out = new ArrayList<>();
+        List<Contract> contracts = new ArrayList<>();
         try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT")) {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                //System.out.println("ResultSet output: "+rs.getString("nameOfClient"));
-                out.add(buildContract(rs));
+                contracts.add(resultSetToContract(rs));
             }
         } catch (SQLException ex) {
             Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return out;
+        return contracts;
     }
 
+//    @Override
+//    public List<Contract> getActiveContracts() {
+//        List<Contract> all = getAllContracts();
+//        List<Contract> active = new ArrayList<>();
+//
+//        Date actual = new Date();
+//        Long actualDate = actual.getTime();
+//
+//        for (Contract c : all) {
+//            Long endDate = c.getStartDate() + TimeUnit.MICROSECONDS.convert(c.getLength(), TimeUnit.DAYS);
+//            if (endDate < actualDate) {
+//                active.add(c);
+//            }
+//        }
+//
+//        return active;
+//    }
+    
+      @Override
+      public List<Contract> getActiveContracts(){
+          List<Contract> active = new ArrayList<>();
+          for (Contract c: getAllContracts()) {
+              if (isActive(c)) {
+                  active.add(c);
+              }
+          }
+          return active;
+      }
+
+//    @Override
+//    public BigDecimal getPrice(Contract contract) {
+//        if (contract == null) {
+//            throw new IllegalArgumentException("getPrice: input contract is null");
+//        } else {
+//            contract.isValid();
+//        }
+//
+//        int length = 0;
+//        float discount = 0;
+//        long airshipId = 0;
+//        BigDecimal priceDay = new BigDecimal(0);
+//
+//        try (PreparedStatement st = connection.prepareStatement("SELECT length, discount, airshipId FROM CONTRACT WHERE id = ?")) {
+//            st.setLong(1, contract.getId());
+//            ResultSet rs = st.executeQuery();
+//
+//            while (rs.next()) {
+//                length = rs.getInt("length");
+//                discount = rs.getFloat("discount");
+//                airshipId = rs.getLong("airshipId");
+//            }
+//            try (PreparedStatement st2 = connection.prepareStatement("SELECT pricePerDay FROM AIRSHIP WHERE ID = ?")) {
+//                st2.setLong(1, airshipId);
+//                ResultSet rs2 = st2.executeQuery();
+//
+//                while (rs.next()) {
+//                    priceDay = rs.getBigDecimal("pricePerDay");
+//                }
+//            }
+//
+//        } catch (SQLException ex) {
+//            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        return priceDay.multiply(BigDecimal.valueOf(length * discount));
+//    }
+    
     @Override
-    public List<Contract> getActiveContracts() {
-        List<Contract> all = getAllContracts();
-        List<Contract> out = new ArrayList<>();
-
-        Date actual = new Date();
-        Long actualDate = actual.getTime();
-
-        for (Contract c : all) {
-            Long endDate = c.getStartDate() + TimeUnit.MICROSECONDS.convert(c.getLength(), TimeUnit.DAYS);
-            if (endDate < actualDate) {
-                out.add(c);
-            }
-        }
-
-        return out;
+    public BigDecimal getPrice(Contract contract) {
+        return BigDecimal.valueOf(contract.getLength() * contract.getAirship().getPricePerDay().longValue());
     }
 
+
+//    @Override
+//    public Date getEndDate(Contract c) {
+//        if (c == null) {
+//            throw new IllegalArgumentException("getEndDate: input contract is null");
+//        } else {
+//            c.isValid();
+//        }
+//        long startDate = 0;
+//        int length = 0;
+//        Date outDate = new Date();
+//
+//        try (PreparedStatement st = connection.prepareStatement("SELECT length, startDate FROM CONTRACT WHERE id = ?")) {
+//            st.setLong(1, c.getId());
+//            ResultSet rs = st.executeQuery();
+//
+//            while (rs.next()) {
+//                startDate = rs.getLong("startDate");
+//                length = rs.getInt("length");
+//            }
+//        } catch (SQLException ex) {
+//            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        outDate.setTime(startDate + TimeUnit.MICROSECONDS.convert(length, TimeUnit.DAYS));
+//        return outDate;
+//    }
+    
     @Override
-    public BigDecimal getPrice(Contract c) {
-        if (c == null) {
-            throw new IllegalArgumentException("getPrice: input contract is null");
-        } else {
-            c.isValid();
-        }
-
-        int length = 0;
-        float discount = 0;
-        long airshipId = 0;
-        BigDecimal priceDay = new BigDecimal(0);
-
-        try (PreparedStatement st = connection.prepareStatement("SELECT length, discount, airshipId FROM CONTRACT WHERE id = ?")) {
-            st.setLong(1, c.getId());
-            ResultSet rs = st.executeQuery();
-
-            while (rs.next()) {
-                length = rs.getInt("length");
-                discount = rs.getFloat("discount");
-                airshipId = rs.getLong("airshipId");
-            }
-            try (PreparedStatement st2 = connection.prepareStatement("SELECT pricePerDay FROM AIRSHIP WHERE ID = ?")) {
-                st2.setLong(1, airshipId);
-                ResultSet rs2 = st2.executeQuery();
-
-                while (rs.next()) {
-                    priceDay = rs.getBigDecimal("pricePerDay");
-                }
-            }
-
-        } catch (SQLException ex) {
-            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return priceDay.multiply(BigDecimal.valueOf(length * discount));
+    public Date getEndDate(Contract contract) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(contract.getStartDate());
+        cal.add(Calendar.DATE, contract.getLength());
+        return cal.getTime();
     }
-
-    @Override
-    public Date getEndDate(Contract c) {
-        if (c == null) {
-            throw new IllegalArgumentException("getEndDate: input contract is null");
-        } else {
-            c.isValid();
-        }
-        long startDate = 0;
-        int length = 0;
-        Date outDate = new Date();
-
-        try (PreparedStatement st = connection.prepareStatement("SELECT length, startDate FROM CONTRACT WHERE id = ?")) {
-            st.setLong(1, c.getId());
-            ResultSet rs = st.executeQuery();
-
-            while (rs.next()) {
-                startDate = rs.getLong("startDate");
-                length = rs.getInt("length");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        outDate.setTime(startDate + TimeUnit.MICROSECONDS.convert(length, TimeUnit.DAYS));
-        return outDate;
+    
+    public boolean isActive(Contract contract) {
+       return contract.getStartDate().after(Calendar.getInstance(Locale.ENGLISH).getTime());
     }
 
     @Override
@@ -240,7 +267,7 @@ public class ContractManagerImpl implements ContractManager {
             ResultSet rs = st.executeQuery();
             
             while(rs.next()){
-                out.add(buildContract(rs));
+                out.add(resultSetToContract(rs));
             }
         } catch (SQLException ex) {
             Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -249,39 +276,16 @@ public class ContractManagerImpl implements ContractManager {
         return out;
     }
 
-    @Override
-    public Contract getActiveByAirship(Airship a) {
-        if (a == null) {
-            throw new IllegalArgumentException("Airship is null");
-        }
-        if (a.getId() == null) {
-            throw new IllegalArgumentException("Id is null");
-        }
-        if (a.getId() < 1) {
-            throw new IllegalArgumentException("Id is negative or zero");
-        }
-        
-        try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE airshipId = ?")) {
-            st.setLong(1, a.getId());
-            ResultSet rs = st.executeQuery();
-            
-            while(rs.next()){
-                return buildContract(rs);
-            }
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
+    private Contract resultSetToContract(ResultSet rs) throws SQLException {
+        Contract contract = new Contract();
+        contract.setId(rs.getLong("id"))
+                .setDiscount(rs.getFloat("discount"))
+                .setLength(rs.getInt("length"))
+                .setNameOfClient(rs.getString("nameOfClient"))
+                .setPaymentMethod(PaymentMethod.valueOf(rs.getString("paymentMethod")))
+                .setStartDate(rs.getDate("startDate"))
+                .setAirship(airships.getAirshipById(rs.getLong("airshipId")));
 
-    private Contract buildContract(ResultSet rs) throws SQLException {
-        Contract c = new Contract();
-        c.setId(rs.getLong("id")).setDiscount(rs.getFloat("discount")).setLength(rs.getInt("length"));
-        c.setNameOfClient(rs.getString("nameOfClient")).setPaymentMethod(PaymentMethod.valueOf(rs.getString("paymentMethod")));
-        c.setStartDate(rs.getLong("startDate"));
-        c.setAirship(airships.getAirshipById(rs.getLong("airshipId")));
-
-        return c;
+        return contract;
     }
 }
