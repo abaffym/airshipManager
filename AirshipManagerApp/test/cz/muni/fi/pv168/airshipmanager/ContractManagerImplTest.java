@@ -6,11 +6,17 @@
 
 package cz.muni.fi.pv168.airshipmanager;
 
+import cz.muni.fi.pv168.common.DBUtils;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Calendar;
+//import java.sql.Date;
 import java.util.Date;
+import java.util.List;
+import javax.sql.DataSource;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,46 +30,34 @@ public class ContractManagerImplTest {
     private ContractManagerImpl contracts;
     private AirshipManagerImpl airships;
     private static final double APPX = 0.0001;
-    Long usedDate;
-    Connection conn;
+    private java.sql.Date usedDate;
+    private Connection conn;
+    private DataSource ds;
     
-    //edit format setter by: http://kore.fi.muni.cz/wiki/index.php/PV168/P%C5%99%C3%ADklad_objektov%C3%A9ho_n%C3%A1vrhu
-    
-    public ContractManagerImplTest() {
+    private static DataSource prepareDataSource() throws SQLException {
+        BasicDataSource ds = new BasicDataSource();
+        ds.setUrl("jdbc:derby:memory:AirshipManagerImplTest;create=true");
+        return ds;
     }
 
     @Before
     public void setUp() throws SQLException {
-        //SQL
-        //!! Another table needs to be added to return Airship Id 
+        ds = prepareDataSource();
+        DBUtils.executeSqlScript(ds, AirshipManager.class.getResource("createTables.sql"));
         
-        conn = DriverManager.getConnection("jdbc:derby:memory:ContractManagerImplTest;create=true");
-        conn.prepareStatement("CREATE TABLE CONTRACT("
-                + "id BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,"
-                + "startDate BIGINT,"
-                + "nameOfClient VARCHAR(50),"
-                + "paymentMethod VARCHAR(12),"
-                + "airshipId BIGINT,"
-                + "discount DECIMAL,"
-                + "length INTEGER)").executeUpdate();
-        conn.prepareStatement("CREATE TABLE AIRSHIP("
-                + "ID BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,"
-                + "NAME VARCHAR(50),"
-                + "CAPACITY INTEGER,"
-                + "PRICE DECIMAL)").executeUpdate();
+        contracts = new ContractManagerImpl();
+        airships = new AirshipManagerImpl();
         
-        contracts = new ContractManagerImpl(conn);
-        airships = new AirshipManagerImpl(conn);
-        //test date set
-        usedDate = Date.UTC(2014, 1, 1, 0, 0, 0);
+        contracts.setDataSource(ds);
+        airships.setDataSource(ds);
+        
+        usedDate = java.sql.Date.valueOf("2014-01-01");
         
     }
+    
     @After
     public void tearDown() throws SQLException {
-        conn.prepareStatement("DROP TABLE CONTRACT").executeUpdate();
-        conn.prepareStatement("DROP TABLE AIRSHIP").executeUpdate();
-        conn.close();
-        
+        DBUtils.executeSqlScript(ds, AirshipManager.class.getResource("dropTables.sql"));
     }
 
     /**
@@ -73,13 +67,11 @@ public class ContractManagerImplTest {
     public void testAddContract() {
         System.out.println("addContract test run");
         
-        Contract expected = new Contract();
-        expected.setAirship(new Airship().setName("Testship").setId(1L)).setDiscount(1f).setLength(10).setNameOfClient("Zeppelin");
-        expected.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
+        Contract expected = buildContract(1);
         int prevSize = contracts.getAllContracts().size();
         contracts.addContract(expected);
         
-        Contract result = contracts.getContractById(1L);
+        Contract result = contracts.getContractById(expected.getId());
         
         assertEquals(expected, result);
         
@@ -91,20 +83,19 @@ public class ContractManagerImplTest {
     @Test
     public void testRemoveContract() {
         System.out.println("removeContract test run");
-        Contract expected = new Contract();
-        expected.setAirship(new Airship().setName("Testship").setId(1L)).setDiscount(1f).setLength(10).setNameOfClient("Zeppelin");
-        expected.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
-        Contract c2 = new Contract();
+        Contract expected = buildContract(1);
+        Contract c2 = buildContract(2);
+        
         contracts.addContract(expected);
         int prevSize = contracts.getAllContracts().size();
+        
         contracts.removeContract(expected);
         try{
             contracts.removeContract(c2);
-            fail("Contract to have been removed was not found");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e){
             //OK
         }
-        assertEquals(null ,contracts.getContractById(expected.getId()));
+        assertEquals(null, contracts.getContractById(expected.getId()));
         assertEquals(prevSize-1, contracts.getAllContracts().size());
     }
 
@@ -145,6 +136,87 @@ public class ContractManagerImplTest {
         assertDeepEquals(expected, contracts.getContractById(expected.getId()));
         
     }
+    @Test
+    public void testGetActiveByAirship(){
+        System.out.println("testGetActiveByAirship run");
+        Date current = new Date(System.currentTimeMillis());
+        
+        Contract c1 = buildContract(1);
+        c1.setStartDate(getSqlDate(current, -1));
+        System.out.println("testGetActiveByAirship ID: "+c1.getId());
+        Contract c2 = buildContract(2);
+        c2.setStartDate(getSqlDate(current, +1));
+        c2.setAirship(c1.getAirship());
+        
+        contracts.addContract(c1);
+        contracts.addContract(c2);
+        System.out.println("testGetActiveByAirship ID: "+contracts.getActiveByAirship(c1.getAirship()).getId());
+        
+        //!! I dont understand whats this shit doing!
+        Contract actual = contracts.getActiveByAirship(c1.getAirship());
+        
+        assertDeepEquals(c1, actual);
+    }
+    @Test
+    public void testGetActiveContracts(){
+        Date current = new Date(System.currentTimeMillis());
+        
+        Contract c1 = buildContract(1);
+        c1.setStartDate(getSqlDate(current, 1));
+        
+        Contract c2 = buildContract(2);
+        c2.setStartDate(getSqlDate(current, -1));
+        c2.setAirship(c1.getAirship());
+        
+        contracts.addContract(c1);
+        contracts.addContract(c2);
+        List<Contract> actual = contracts.getActiveContracts();
+        
+        assertEquals(1, actual.size());
+        assertDeepEquals(actual.get(0), c2);
+    }
+    @Test
+    public void testGetAllByAirship(){
+        Contract c1 = buildContract(1);
+        Contract c2 = buildContract(2);
+        
+        contracts.addContract(c1);
+        contracts.addContract(c2);
+        List<Contract> actual = contracts.getAllByAirship(c1.getAirship());
+        
+        assertDeepEquals(c1, actual.get(0));
+        assertEquals(1, actual.size());
+    }
+    
+    @Test
+    public void testGetContractById(){
+        Contract c1 = buildContract(1);
+        contracts.addContract(c1);
+        
+        Contract expected = contracts.getContractById(c1.getId());
+        assertDeepEquals(c1, expected);
+    }
+    
+    @Test
+    public void testGetAllContracts(){
+        Contract c1 = buildContract(1);
+        Contract c2 = buildContract(2);
+        
+        contracts.addContract(c1);
+        contracts.addContract(c2);
+        List<Contract> all = contracts.getAllContracts();
+        
+        assertEquals(2, all.size());
+    }
+    
+    @Test
+    public void testGetEndDate(){
+        Contract c1 = buildContract(1);
+        contracts.addContract(c1);
+        c1.setStartDate(usedDate);
+        
+        assertTrue(contracts.getEndDate(c1).getTime() > usedDate.getTime());
+    }
     
     private void assertDeepEquals(Contract expected, Contract actual){
         assertEquals(expected.getId(), actual.getId());
@@ -153,6 +225,38 @@ public class ContractManagerImplTest {
         assertEquals(expected.getLength(), actual.getLength());
         assertEquals(expected.getNameOfClient(), actual.getNameOfClient());
         assertEquals(expected.getPaymentMethod(), actual.getPaymentMethod());
-        assertEquals(expected.getStartDate(), actual.getStartDate());
+        assertEquals(expected.getStartDate().toString(), actual.getStartDate().toString());
+    }
+    
+    private void assertDeepEquals(Airship expected, Airship actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getCapacity(), actual.getCapacity());
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getPricePerDay(), actual.getPricePerDay());
+    }
+    
+    private Contract buildContract(int diff){
+        Contract out = new Contract();
+        out.setAirship(buildAirship(diff)).setDiscount(1f*(1-(diff/10)));
+        out.setLength(7*diff).setNameOfClient("Zeppelin "+Integer.toString(diff));
+        out.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
+         
+        return out;
+    }
+    private Airship buildAirship(int diff){
+        Airship a = new Airship()
+                .setName("Testship "+Integer.toString(diff))
+                .setPricePerDay(BigDecimal.valueOf(diff*5))
+                .setCapacity(diff*4);
+        airships.addAirship(a);
+        return a;
+    }
+    
+    private java.sql.Date getSqlDate(java.util.Date date, int daysMove){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, daysMove);
+        
+        return new java.sql.Date(cal.getTime().getTime());
     }
 }

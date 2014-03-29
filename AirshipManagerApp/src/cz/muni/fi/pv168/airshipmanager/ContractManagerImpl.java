@@ -9,11 +9,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  * This class implements ComtractManager.
@@ -22,35 +23,52 @@ import java.util.logging.Logger;
  * @author Marek Abaffy 422572
  */
 public class ContractManagerImpl implements ContractManager {
-
-    private final Connection connection;
+    
     private final AirshipManagerImpl airships;
-
-    public ContractManagerImpl(Connection connection) {
-        this.connection = connection;
+    private Connection conn;
+    
+    public ContractManagerImpl(){
         airships = new AirshipManagerImpl();
+    }
+    
+    public ContractManagerImpl(Connection conn){
+        this.conn = conn;
+        airships = new AirshipManagerImpl();
+    }
+    
+    private DataSource dataSource;
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+        airships.setDataSource(dataSource);
+    }
+
+    private void checkDataSource() {
+        if (dataSource == null) {
+            throw new IllegalStateException("DataSource is not set");
+        }
     }
 
     @Override
     public void addContract(Contract contract) {
         contract.isValid();
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement st = connection.prepareStatement("INSERT INTO CONTRACT ("
+                    + "startDate, length, nameOfClient, airshipId, discount, paymentMethod)"
+                    + "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
 
-        try (PreparedStatement st = connection.prepareStatement("INSERT INTO CONTRACT ("
-                + "startDate, length, nameOfClient, airshipId, discount, paymentMethod)"
-                + "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+                st.setDate(1, contract.getStartDate());
+                st.setInt(2, contract.getLength());
+                st.setString(3, contract.getNameOfClient());
+                st.setLong(4, contract.getAirship().getId());
+                st.setFloat(5, contract.getDiscount());
+                st.setString(6, contract.getPaymentMethod().name());
+                st.execute();
 
-            st.setDate(1, contract.getStartDate());
-            st.setInt(2, contract.getLength());
-            st.setString(3, contract.getNameOfClient());
-            st.setLong(4, contract.getAirship().getId());
-            st.setFloat(5, contract.getDiscount());
-            st.setString(6, contract.getPaymentMethod().name());
-            st.execute();
-
-            ResultSet keyRS = st.getGeneratedKeys();
-            keyRS.next();
-            contract.setId(keyRS.getLong(1));
-
+                ResultSet keyRS = st.getGeneratedKeys();
+                keyRS.next();
+                contract.setId(keyRS.getLong(1));
+            }
         } catch (SQLException ex) {
             Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -63,17 +81,19 @@ public class ContractManagerImpl implements ContractManager {
         } else {
             contract.isValid();
         }
-        try (PreparedStatement st = connection.prepareStatement("UPDATE CONTRACT SET"
-                + " startDate = ?, length = ?, nameOfClient = ?, airshipId = ?, discount = ?, paymentMethod = ?"
-                + " WHERE ID = ?")) {
-            st.setDate(1, contract.getStartDate());
-            st.setInt(2, contract.getLength());
-            st.setString(3, contract.getNameOfClient());
-            st.setLong(4, contract.getAirship().getId());
-            st.setFloat(5, contract.getDiscount());
-            st.setString(6, contract.getPaymentMethod().name());
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement st = connection.prepareStatement("UPDATE CONTRACT SET"
+                    + " startDate = ?, length = ?, nameOfClient = ?, airshipId = ?, discount = ?, paymentMethod = ?"
+                    + " WHERE ID = ?")) {
+                st.setDate(1, contract.getStartDate());
+                st.setInt(2, contract.getLength());
+                st.setString(3, contract.getNameOfClient());
+                st.setLong(4, contract.getAirship().getId());
+                st.setFloat(5, contract.getDiscount());
+                st.setString(6, contract.getPaymentMethod().name());
 
-            st.executeUpdate();
+                st.executeUpdate();
+            }
         } catch (SQLException ex) {
             Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -82,12 +102,18 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public void removeContract(Contract contract) {
-        contract.isValid();
-
-        try (PreparedStatement st = connection.prepareStatement("DELETE FROM CONTRACT WHERE Id= ?")) {
-            st.setLong(1, contract.getId());
-            st.execute();
-
+        if (contract == null) {
+            throw new IllegalArgumentException("Contract in removeAirship() is null");
+        } else if(contract.getId() == null) {
+            throw new IllegalArgumentException("Contract ID in removeAirship() is null");
+        } else {
+            contract.isValid();
+        }
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement st = connection.prepareStatement("DELETE FROM CONTRACT WHERE Id= ?")) {
+                st.setLong(1, contract.getId());
+                st.execute();
+            }
         } catch (SQLException ex) {
             Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -95,12 +121,15 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public Contract getContractById(Long id) {
+        System.out.println("Requested id: "+id);
         Contract contract = null;
-        try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE id= ?")) {
-            st.setLong(1, id);
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                contract = resultSetToContract(rs);
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE id= ?")) {
+                st.setLong(1, id);
+                ResultSet rs = st.executeQuery();
+                if (rs.next()) {
+                    contract = resultSetToContract(rs);
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -110,26 +139,27 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public Contract getActiveByAirship(Airship airship) {
-        Contract contract = null;
-        try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE airshipId= ?")) {
-            st.setLong(1, airship.getId());
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                contract = resultSetToContract(rs);
+        List<Contract> all = getAllByAirship(airship);
+        System.out.println("Iterator output: ");
+        for (Contract c : all) {
+            //System.out.println("StartDate: "+c.getStartDate()+" Length: "+c.getLength()+" IsActive: "+isActive(c));
+            
+            if(isActive(c)){
+                return c;
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return contract;
+        return null;
     }
 
     @Override
     public List<Contract> getAllContracts() {
         List<Contract> contracts = new ArrayList<>();
-        try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT")) {
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                contracts.add(resultSetToContract(rs));
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT")) {
+                ResultSet rs = st.executeQuery();
+                while (rs.next()) {
+                    contracts.add(resultSetToContract(rs));
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -137,105 +167,23 @@ public class ContractManagerImpl implements ContractManager {
         return contracts;
     }
 
-//    @Override
-//    public List<Contract> getActiveContracts() {
-//        List<Contract> all = getAllContracts();
-//        List<Contract> active = new ArrayList<>();
-//
-//        Date actual = new Date();
-//        Long actualDate = actual.getTime();
-//
-//        for (Contract c : all) {
-//            Long endDate = c.getStartDate() + TimeUnit.MICROSECONDS.convert(c.getLength(), TimeUnit.DAYS);
-//            if (endDate < actualDate) {
-//                active.add(c);
-//            }
-//        }
-//
-//        return active;
-//    }
-    
-      @Override
-      public List<Contract> getActiveContracts(){
-          List<Contract> active = new ArrayList<>();
-          for (Contract c: getAllContracts()) {
-              if (isActive(c)) {
-                  active.add(c);
-              }
-          }
-          return active;
-      }
-
-//    @Override
-//    public BigDecimal getPrice(Contract contract) {
-//        if (contract == null) {
-//            throw new IllegalArgumentException("getPrice: input contract is null");
-//        } else {
-//            contract.isValid();
-//        }
-//
-//        int length = 0;
-//        float discount = 0;
-//        long airshipId = 0;
-//        BigDecimal priceDay = new BigDecimal(0);
-//
-//        try (PreparedStatement st = connection.prepareStatement("SELECT length, discount, airshipId FROM CONTRACT WHERE id = ?")) {
-//            st.setLong(1, contract.getId());
-//            ResultSet rs = st.executeQuery();
-//
-//            while (rs.next()) {
-//                length = rs.getInt("length");
-//                discount = rs.getFloat("discount");
-//                airshipId = rs.getLong("airshipId");
-//            }
-//            try (PreparedStatement st2 = connection.prepareStatement("SELECT pricePerDay FROM AIRSHIP WHERE ID = ?")) {
-//                st2.setLong(1, airshipId);
-//                ResultSet rs2 = st2.executeQuery();
-//
-//                while (rs.next()) {
-//                    priceDay = rs.getBigDecimal("pricePerDay");
-//                }
-//            }
-//
-//        } catch (SQLException ex) {
-//            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        return priceDay.multiply(BigDecimal.valueOf(length * discount));
-//    }
-    
     @Override
-    public BigDecimal getPrice(Contract contract) {
-        return BigDecimal.valueOf(contract.getLength() * contract.getAirship().getPricePerDay().longValue());
+    public List<Contract> getActiveContracts() {
+        List<Contract> active = new ArrayList<>();
+        for (Contract c : getAllContracts()) {
+            if (isActive(c)) {
+                active.add(c);
+            }
+        }
+        return active;
     }
 
+    @Override
+    public BigDecimal getPrice(Contract contract) {
+        return contract.getAirship().getPricePerDay().multiply(BigDecimal.valueOf(contract.getDiscount() * contract.getLength()));
+        //return BigDecimal.valueOf(contract.getLength() * contract.getAirship().getPricePerDay().longValue());
+    }
 
-//    @Override
-//    public Date getEndDate(Contract c) {
-//        if (c == null) {
-//            throw new IllegalArgumentException("getEndDate: input contract is null");
-//        } else {
-//            c.isValid();
-//        }
-//        long startDate = 0;
-//        int length = 0;
-//        Date outDate = new Date();
-//
-//        try (PreparedStatement st = connection.prepareStatement("SELECT length, startDate FROM CONTRACT WHERE id = ?")) {
-//            st.setLong(1, c.getId());
-//            ResultSet rs = st.executeQuery();
-//
-//            while (rs.next()) {
-//                startDate = rs.getLong("startDate");
-//                length = rs.getInt("length");
-//            }
-//        } catch (SQLException ex) {
-//            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        outDate.setTime(startDate + TimeUnit.MICROSECONDS.convert(length, TimeUnit.DAYS));
-//        return outDate;
-//    }
-    
     @Override
     public Date getEndDate(Contract contract) {
         Calendar cal = Calendar.getInstance();
@@ -243,9 +191,26 @@ public class ContractManagerImpl implements ContractManager {
         cal.add(Calendar.DATE, contract.getLength());
         return cal.getTime();
     }
-    
-    public boolean isActive(Contract contract) {
-       return contract.getStartDate().after(Calendar.getInstance(Locale.ENGLISH).getTime());
+
+    /**
+     * Determines whether the contract is still active
+     *
+     * @param contract given contract
+     * @return true if contract is still active, otherwise false
+     */
+    public static boolean isActive(Contract contract) {
+        if(contract.getStartDate().after(Calendar.getInstance(Locale.ENGLISH).getTime())){
+            return false;
+        }
+        
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(contract.getStartDate());
+        cal.add(Calendar.DATE, contract.getLength());
+        
+        if(cal.before(cal.getTime())){
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -259,20 +224,21 @@ public class ContractManagerImpl implements ContractManager {
         if (airship.getId() < 1) {
             throw new IllegalArgumentException("Id is negative or zero");
         }
-        
+
         List<Contract> out = new ArrayList<>();
-        
-        try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE airshipId = ?")) {
-            st.setLong(1, airship.getId());
-            ResultSet rs = st.executeQuery();
-            
-            while(rs.next()){
-                out.add(resultSetToContract(rs));
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE airshipId = ?")) {
+                st.setLong(1, airship.getId());
+                ResultSet rs = st.executeQuery();
+
+                while (rs.next()) {
+                    out.add(resultSetToContract(rs));
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return out;
     }
 
@@ -288,4 +254,5 @@ public class ContractManagerImpl implements ContractManager {
 
         return contract;
     }
+
 }
