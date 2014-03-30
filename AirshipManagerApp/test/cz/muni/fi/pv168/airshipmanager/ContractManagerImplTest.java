@@ -143,16 +143,14 @@ public class ContractManagerImplTest {
         
         Contract c1 = buildContract(1);
         c1.setStartDate(getSqlDate(current, -1));
-        System.out.println("testGetActiveByAirship ID: "+c1.getId());
         Contract c2 = buildContract(2);
         c2.setStartDate(getSqlDate(current, +1));
         c2.setAirship(c1.getAirship());
         
         contracts.addContract(c1);
         contracts.addContract(c2);
-        System.out.println("testGetActiveByAirship ID: "+contracts.getActiveByAirship(c1.getAirship()).getId());
         
-        //!! I dont understand whats this shit doing!
+        
         Contract actual = contracts.getActiveByAirship(c1.getAirship());
         
         assertDeepEquals(c1, actual);

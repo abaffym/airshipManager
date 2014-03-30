@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
-2014-03-29 21:28:44.339 GMT:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.6.2.1 - (999685): instance a816c00e-0145-0fbe-a788-000002f2aa38 
-on database directory memory:D:\Codes\MU_scripty\Java\pb168_projekt\AirshipManagerApp\AirshipManagerImplTest  with class loader sun.misc.Launcher$AppClassLoader@1a2b2cf8 
+2014-03-30 07:58:34.250 GMT:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.6.2.1 - (999685): instance a816c00e-0145-11ff-4852-000002f18898 
+on database directory memory:D:\Codes\MU_scripty\Java\pb168_projekt\AirshipManagerApp\AirshipManagerImplTest  with class loader sun.misc.Launcher$AppClassLoader@231a6631 
 Loaded from file:/D:/Codes/MU_scripty/Java/External%20Libraries/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.7.0_40-b43

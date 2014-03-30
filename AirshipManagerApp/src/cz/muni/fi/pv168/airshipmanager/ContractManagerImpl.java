@@ -121,7 +121,6 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public Contract getContractById(Long id) {
-        System.out.println("Requested id: "+id);
         Contract contract = null;
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE id= ?")) {
@@ -140,10 +139,7 @@ public class ContractManagerImpl implements ContractManager {
     @Override
     public Contract getActiveByAirship(Airship airship) {
         List<Contract> all = getAllByAirship(airship);
-        System.out.println("Iterator output: ");
         for (Contract c : all) {
-            //System.out.println("StartDate: "+c.getStartDate()+" Length: "+c.getLength()+" IsActive: "+isActive(c));
-            
             if(isActive(c)){
                 return c;
             }
