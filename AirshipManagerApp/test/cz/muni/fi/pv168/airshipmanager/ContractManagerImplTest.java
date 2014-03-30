@@ -120,20 +120,10 @@ public class ContractManagerImplTest {
     public void testEditContract() {
         System.out.println("editContract test run");
         
-        Contract contract = new Contract();
-        Airship a = new Airship().setName("Testship").setPricePerDay(BigDecimal.valueOf(25)).setCapacity(12);
-        airships.addAirship(a);
-        
-        contract.setAirship(a)
-                .setDiscount(1.0f)
-                .setLength(10)
-                .setNameOfClient("Peter")
-                .setPaymentMethod(PaymentMethod.CASH)
-                .setStartDate(usedDate);
-        
-        contracts.addContract(contract);
+        Contract c = buildContract(5);
+        contracts.addContract(c);
                 
-        Contract updated = contracts.getContractById(contract.getId());
+        Contract updated = contracts.getContractById(c.getId());
         
         updated.setDiscount(1.8f)
                .setLength(11)
