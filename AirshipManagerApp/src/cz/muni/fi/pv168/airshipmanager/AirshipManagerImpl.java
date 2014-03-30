@@ -191,7 +191,9 @@ public class AirshipManagerImpl implements AirshipManager {
     public boolean isRented(Airship airship) {
         ContractManagerImpl cManager = null;
         try (Connection connection = dataSource.getConnection()) {
-            cManager = new ContractManagerImpl(connection);
+            cManager = new ContractManagerImpl();
+            cManager.setDataSource(dataSource);
+            
         } catch (SQLException ex) {
             Logger.getLogger(AirshipManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -4,8 +4,10 @@ import cz.muni.fi.pv168.common.DBUtils;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -302,7 +304,8 @@ public class AirshipManagerImplTest {
      */
     @Test
     public void testGetFreeAirships() throws SQLException {
-        ContractManagerImpl cManager = new ContractManagerImpl(ds.getConnection());
+        ContractManagerImpl cManager = new ContractManagerImpl();
+        cManager.setDataSource(ds);
 
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
         Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
@@ -311,13 +314,14 @@ public class AirshipManagerImplTest {
         manager.addAirship(airship);
         manager.addAirship(airship2);
         manager.addAirship(airship3);
+        Date current = new Date(System.currentTimeMillis());
 
         Contract contract = new Contract();
         contract.setAirship(airship2)
                 .setLength(1)
                 .setNameOfClient("Client")
                 .setPaymentMethod(PaymentMethod.CASH)
-                .setStartDate(date("2014-01-01"));
+                .setStartDate(getSqlDate(current, 0));
         cManager.addContract(contract);
 
         List<Airship> expected = Arrays.asList(airship, airship3);
@@ -331,7 +335,7 @@ public class AirshipManagerImplTest {
                 .setLength(1)
                 .setNameOfClient("Client")
                 .setPaymentMethod(PaymentMethod.CASH)
-                .setStartDate(date("2014-01-01"));
+                .setStartDate(getSqlDate(current, 0));
         cManager.addContract(contract2);
 
         Contract contract3 = new Contract();
@@ -339,7 +343,7 @@ public class AirshipManagerImplTest {
                 .setLength(1)
                 .setNameOfClient("Client")
                 .setPaymentMethod(PaymentMethod.CASH)
-                .setStartDate(date("2014-01-01"));
+                .setStartDate(getSqlDate(current, 0));
         cManager.addContract(contract3);
 
         actual = manager.getFreeAirships();
@@ -355,18 +359,20 @@ public class AirshipManagerImplTest {
      */
     @Test
     public void testIsRented() throws SQLException {
-        ContractManagerImpl cManager = new ContractManagerImpl(ds.getConnection());
+        ContractManagerImpl cManager = new ContractManagerImpl();
+        cManager.setDataSource(ds);
 
         Airship airship = newAirship("AirshipOne", BigDecimal.valueOf(140), 50);
         Airship airship2 = newAirship("AirshipTwo", BigDecimal.valueOf(120), 30);
-        airship.setId(1L);
-        airship2.setId(2L);
+        manager.addAirship(airship);
+        manager.addAirship(airship2);
+        Date current = new Date(System.currentTimeMillis());
         Contract contract = new Contract();
         contract.setAirship(airship)
                 .setLength(1)
                 .setNameOfClient("Client")
                 .setPaymentMethod(PaymentMethod.CASH)
-                .setStartDate(date("2014-01-01"));
+                .setStartDate(getSqlDate(current, 0));
         cManager.addContract(contract);
 
         assertTrue(manager.isRented(airship));
@@ -403,5 +409,13 @@ public class AirshipManagerImplTest {
             return o1.getId().compareTo(o2.getId());
         }
     };
+    
+    private java.sql.Date getSqlDate(java.util.Date date, int daysMove){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, daysMove);
+        
+        return new java.sql.Date(cal.getTime().getTime());
+    }
 
 }

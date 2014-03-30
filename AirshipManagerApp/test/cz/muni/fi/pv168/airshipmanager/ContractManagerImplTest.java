@@ -120,20 +120,28 @@ public class ContractManagerImplTest {
     public void testEditContract() {
         System.out.println("editContract test run");
         
-        Contract expected = new Contract();
+        Contract contract = new Contract();
         Airship a = new Airship().setName("Testship").setPricePerDay(BigDecimal.valueOf(25)).setCapacity(12);
         airships.addAirship(a);
-        expected.setAirship(a).setDiscount(1.0f).setLength(10).setNameOfClient("Peter");
-        expected.setPaymentMethod(PaymentMethod.CASH).setStartDate(usedDate);
-        contracts.addContract(expected);
         
+        contract.setAirship(a)
+                .setDiscount(1.0f)
+                .setLength(10)
+                .setNameOfClient("Peter")
+                .setPaymentMethod(PaymentMethod.CASH)
+                .setStartDate(usedDate);
         
-        Contract c2 = new Contract();
-        c2.setAirship(a).setDiscount(0.8f).setLength(11).setNameOfClient("Pavol");
-        c2.setPaymentMethod(PaymentMethod.CREDIT_CARD).setStartDate(usedDate);
-        contracts.editContract(c2);
+        contracts.addContract(contract);
+                
+        Contract updated = contracts.getContractById(contract.getId());
         
-        assertDeepEquals(expected, contracts.getContractById(expected.getId()));
+        updated.setDiscount(1.8f)
+               .setLength(11)
+               .setNameOfClient("Pavol")
+               .setPaymentMethod(PaymentMethod.CREDIT_CARD);
+        
+        contracts.editContract(updated);
+        assertDeepEquals(updated, contracts.getContractById(updated.getId()));
         
     }
     @Test

@@ -9,7 +9,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -25,17 +24,11 @@ import javax.sql.DataSource;
 public class ContractManagerImpl implements ContractManager {
     
     private final AirshipManagerImpl airships;
-    private Connection conn;
     
     public ContractManagerImpl(){
         airships = new AirshipManagerImpl();
     }
-    
-    public ContractManagerImpl(Connection conn){
-        this.conn = conn;
-        airships = new AirshipManagerImpl();
-    }
-    
+        
     private DataSource dataSource;
 
     public void setDataSource(DataSource dataSource) {
@@ -91,7 +84,7 @@ public class ContractManagerImpl implements ContractManager {
                 st.setLong(4, contract.getAirship().getId());
                 st.setFloat(5, contract.getDiscount());
                 st.setString(6, contract.getPaymentMethod().name());
-
+                st.setLong(7, contract.getId());
                 st.executeUpdate();
             }
         } catch (SQLException ex) {
@@ -177,7 +170,6 @@ public class ContractManagerImpl implements ContractManager {
     @Override
     public BigDecimal getPrice(Contract contract) {
         return contract.getAirship().getPricePerDay().multiply(BigDecimal.valueOf(contract.getDiscount() * contract.getLength()));
-        //return BigDecimal.valueOf(contract.getLength() * contract.getAirship().getPricePerDay().longValue());
     }
 
     @Override
@@ -195,18 +187,17 @@ public class ContractManagerImpl implements ContractManager {
      * @return true if contract is still active, otherwise false
      */
     public static boolean isActive(Contract contract) {
-        if(contract.getStartDate().after(Calendar.getInstance(Locale.ENGLISH).getTime())){
+        Date current = new Date(System.currentTimeMillis());
+
+        if(contract.getStartDate().after(current)){
             return false;
         }
         
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();      
         cal.setTime(contract.getStartDate());
         cal.add(Calendar.DATE, contract.getLength());
         
-        if(cal.before(cal.getTime())){
-            return false;
-        }
-        return true;
+        return !current.after(cal.getTime());
     }
 
     @Override
