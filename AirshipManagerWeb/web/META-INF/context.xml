@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context antiJARLocking="true" path="/AirshipManagerWeb">
+<Resource name="jdbc/AirshipManager"
+        auth="Container" type="javax.sql.DataSource"
+        driverClassName="org.apache.derby.jdbc.ClientDriver"
+        username="root" password="root"
+        url="jdbc:derby://localhost:1527/AirshipManager"/>
+</Context>
