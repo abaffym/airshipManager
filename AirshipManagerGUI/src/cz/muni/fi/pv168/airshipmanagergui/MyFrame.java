@@ -5,6 +5,9 @@
  */
 package cz.muni.fi.pv168.airshipmanagergui;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 /**
  *
  * @author Marek
@@ -17,6 +20,16 @@ public class MyFrame extends javax.swing.JFrame {
     public MyFrame() {
         initComponents();
     }
+
+    /* Localization  */
+        Locale en = Locale.US;
+        Locale sk = Locale.forLanguageTag("sk-SK");
+        Locale cz = Locale.forLanguageTag("cs-CZ");
+    
+        Locale local = Locale.getDefault();
+    
+        ResourceBundle bundle = ResourceBundle.getBundle("cz.muni.fi.pv168.airshipmanagergui.MessageBundle", local);
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -260,30 +273,30 @@ public class MyFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        airshipManagerLabel.setText("Airship Manager dialog");
+        airshipManagerLabel.setText(bundle.getString("airship_manager"));
 
-        addAirshiptButton.setText("Add Airship");
+        addAirshiptButton.setText(bundle.getString("add_airship"));
         addAirshiptButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 addAirshiptButtonMouseClicked(evt);
             }
         });
 
-        editAirshipButton.setText("Edit Airship");
+        editAirshipButton.setText(bundle.getString("edit_airship"));
 
-        removeAirshipButton.setText("Remove Airship");
+        removeAirshipButton.setText(bundle.getString("remove_airship"));
 
         org.jdesktop.swingbinding.JTableBinding jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, airshipList, jTable1);
         org.jdesktop.swingbinding.JTableBinding.ColumnBinding columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${name}"));
-        columnBinding.setColumnName("Name");
+        columnBinding.setColumnName(bundle.getString("aTable.name"));
         columnBinding.setColumnClass(String.class);
         columnBinding.setEditable(false);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${capacity}"));
-        columnBinding.setColumnName("Capacity");
+        columnBinding.setColumnName(bundle.getString("aTable.capacity"));
         columnBinding.setColumnClass(Integer.class);
         columnBinding.setEditable(false);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${price} €"));
-        columnBinding.setColumnName("Price");
+        columnBinding.setColumnName(bundle.getString("aTable.price"));
         columnBinding.setEditable(false);
         bindingGroup.addBinding(jTableBinding);
         jTableBinding.bind();
@@ -301,15 +314,18 @@ public class MyFrame extends javax.swing.JFrame {
             .addGroup(airshipTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(airshipTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(airshipManagerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 434, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1)
                     .addGroup(airshipTabLayout.createSequentialGroup()
-                        .addComponent(addAirshiptButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(editAirshipButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(removeAirshipButton))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(127, Short.MAX_VALUE))
+                        .addGroup(airshipTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(airshipManagerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 434, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(airshipTabLayout.createSequentialGroup()
+                                .addComponent(addAirshiptButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(editAirshipButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(removeAirshipButton)))
+                        .addGap(0, 135, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         airshipTabLayout.setVerticalGroup(
             airshipTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -325,49 +341,49 @@ public class MyFrame extends javax.swing.JFrame {
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
-        jTabbedPane.addTab("Airship managment", airshipTab);
+        jTabbedPane.addTab(bundle.getString("airship_tab"), airshipTab);
 
-        contractManagerLabel.setText("Contract Manager dialog");
+        contractManagerLabel.setText(bundle.getString("contract_manager"));
 
-        editContractButton.setText("Edit Contract");
+        editContractButton.setText(bundle.getString("edit_contract"));
 
-        addContractButton.setText("Add Contract");
+        addContractButton.setText(bundle.getString("add_contract"));
         addContractButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 addContractButtonMouseClicked(evt);
             }
         });
 
-        removeContractButton.setText("Remove Contract");
+        removeContractButton.setText(bundle.getString("remove_contract"));
 
         jTable2.getTableHeader().setReorderingAllowed(false);
 
         jTableBinding = org.jdesktop.swingbinding.SwingBindings.createJTableBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, contractList, jTable2);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${airshipid}"));
-        columnBinding.setColumnName("Airship ID");
+        columnBinding.setColumnName(bundle.getString("cTable.airship_id"));
         columnBinding.setColumnClass(java.math.BigInteger.class);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${nameofclient}"));
-        columnBinding.setColumnName("Client Name");
+        columnBinding.setColumnName(bundle.getString("cTable.client"));
         columnBinding.setColumnClass(String.class);
         columnBinding.setEditable(false);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${startdate}"));
-        columnBinding.setColumnName("Start Date");
+        columnBinding.setColumnName(bundle.getString("cTable.start"));
         columnBinding.setColumnClass(java.util.Date.class);
         columnBinding.setEditable(false);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${length}"));
-        columnBinding.setColumnName("Length");
+        columnBinding.setColumnName(bundle.getString("cTable.length"));
         columnBinding.setColumnClass(Integer.class);
         columnBinding.setEditable(false);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${discount}"));
-        columnBinding.setColumnName("Discount");
+        columnBinding.setColumnName(bundle.getString("cTable.discount"));
         columnBinding.setColumnClass(Double.class);
         columnBinding.setEditable(false);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${paymentmethod}"));
-        columnBinding.setColumnName("Payment");
+        columnBinding.setColumnName(bundle.getString("cTable.payment"));
         columnBinding.setColumnClass(String.class);
         columnBinding.setEditable(false);
         columnBinding = jTableBinding.addColumnBinding(org.jdesktop.beansbinding.ELProperty.create("${id}"));
-        columnBinding.setColumnName("Id");
+        columnBinding.setColumnName(bundle.getString("cTable.contract_id"));
         columnBinding.setColumnClass(Long.class);
         bindingGroup.addBinding(jTableBinding);
         jTableBinding.bind();
@@ -417,7 +433,7 @@ public class MyFrame extends javax.swing.JFrame {
                 .addGap(0, 16, Short.MAX_VALUE))
         );
 
-        jTabbedPane.addTab("Contract managment", contractTab);
+        jTabbedPane.addTab(bundle.getString("contract_tab"), contractTab);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -430,6 +446,7 @@ public class MyFrame extends javax.swing.JFrame {
             .addComponent(jTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
+
         bindingGroup.bind();
 
         pack();
@@ -439,10 +456,6 @@ public class MyFrame extends javax.swing.JFrame {
        updateContractFrame.setVisible(true);
     }//GEN-LAST:event_addContractButtonMouseClicked
 
-    private void addAirshiptButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addAirshiptButtonMouseClicked
-        updateAirshipFrame.setVisible(true);
-    }//GEN-LAST:event_addAirshiptButtonMouseClicked
-
     private void updateAirshipSaveButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateAirshipSaveButtonMouseClicked
 
     }//GEN-LAST:event_updateAirshipSaveButtonMouseClicked
@@ -451,6 +464,10 @@ public class MyFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_contractPaymentInputActionPerformed
 
+    private void addAirshiptButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addAirshiptButtonMouseClicked
+        updateAirshipFrame.setVisible(true);
+    }//GEN-LAST:event_addAirshiptButtonMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -458,7 +475,7 @@ public class MyFrame extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

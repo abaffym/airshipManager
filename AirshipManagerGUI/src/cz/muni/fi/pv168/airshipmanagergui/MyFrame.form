@@ -419,6 +419,9 @@
   </Layout>
   <SubComponents>
     <Container class="javax.swing.JTabbedPane" name="jTabbedPane">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTabbedPane()"/>
+      </AuxValues>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
       <SubComponents>
@@ -434,20 +437,25 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="airshipManagerLabel" alignment="0" min="-2" pref="434" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="addAirshiptButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="editAirshipButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="removeAirshipButton" min="-2" max="-2" attributes="0"/>
+                          <Component id="jScrollPane1" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="airshipManagerLabel" alignment="0" min="-2" pref="434" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="addAirshiptButton" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="editAirshipButton" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="removeAirshipButton" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace min="0" pref="135" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane1" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="127" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -471,12 +479,16 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="airshipManagerLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Airship Manager dialog"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="bundle.getString(&quot;airship_manager&quot;)" type="code"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="addAirshiptButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Add Airship"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="bundle.getString(&quot;add_airship&quot;)" type="code"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addAirshiptButtonMouseClicked"/>
@@ -484,12 +496,16 @@
             </Component>
             <Component class="javax.swing.JButton" name="editAirshipButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit Airship"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="bundle.getString(&quot;edit_airship&quot;)" type="code"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="removeAirshipButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remove Airship"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="bundle.getString(&quot;remove_airship&quot;)" type="code"/>
+                </Property>
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane1">
@@ -603,17 +619,23 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="contractManagerLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Contract Manager dialog"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="bundle.getString(&quot;contract_manager&quot;)" type="code"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="editContractButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit Contract"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="bundle.getString(&quot;edit_contract&quot;)" type="code"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="addContractButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Add Contract"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="bundle.getString(&quot;add_contract&quot;)" type="code"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addContractButtonMouseClicked"/>
@@ -621,7 +643,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="removeContractButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remove Contract"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="bundle.getString(&quot;remove_contract&quot;)" type="code"/>
+                </Property>
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane2">
