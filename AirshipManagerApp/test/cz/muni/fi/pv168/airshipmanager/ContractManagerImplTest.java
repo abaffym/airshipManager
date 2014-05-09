@@ -9,7 +9,6 @@ package cz.muni.fi.pv168.airshipmanager;
 import cz.muni.fi.pv168.common.DBUtils;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Calendar;
 //import java.sql.Date;

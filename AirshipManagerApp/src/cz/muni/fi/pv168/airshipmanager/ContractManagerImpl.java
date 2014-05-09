@@ -10,11 +10,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * This class implements ComtractManager.
  *
@@ -24,6 +25,7 @@ import javax.sql.DataSource;
 public class ContractManagerImpl implements ContractManager {
     
     private final AirshipManagerImpl airships;
+    private final Logger log = LoggerFactory.getLogger(ContractManagerImpl.class);
     
     public ContractManagerImpl(){
         airships = new AirshipManagerImpl();
@@ -44,6 +46,8 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public void addContract(Contract contract) {
+        log.info("Attempt to add a contract: "+contract.toString());
+        checkDataSource();
         contract.isValid();
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement st = connection.prepareStatement("INSERT INTO CONTRACT ("
@@ -63,12 +67,13 @@ public class ContractManagerImpl implements ContractManager {
                 contract.setId(keyRS.getLong(1));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
     }
 
     @Override
     public void editContract(Contract contract) {
+        log.info("Attempt to edit contract: "+contract.toString());
         if (contract == null) {
             throw new IllegalArgumentException("Contract in editAirship() is null");
         } else {
@@ -88,13 +93,14 @@ public class ContractManagerImpl implements ContractManager {
                 st.executeUpdate();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
 
     }
 
     @Override
     public void removeContract(Contract contract) {
+        log.info("Attempt to remove contract: "+contract.toString());
         if (contract == null) {
             throw new IllegalArgumentException("Contract in removeAirship() is null");
         } else if(contract.getId() == null) {
@@ -108,12 +114,13 @@ public class ContractManagerImpl implements ContractManager {
                 st.execute();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
     }
 
     @Override
     public Contract getContractById(Long id) {
+        log.info("Attempt to getContractById with given id: "+id.toString());
         Contract contract = null;
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT WHERE id= ?")) {
@@ -124,13 +131,14 @@ public class ContractManagerImpl implements ContractManager {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
         return contract;
     }
 
     @Override
     public Contract getActiveByAirship(Airship airship) {
+        log.info("Attempt to getActiveByAirship with given airship: "+airship.toString());
         List<Contract> all = getAllByAirship(airship);
         for (Contract c : all) {
             if(isActive(c)){
@@ -142,6 +150,7 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public List<Contract> getAllContracts() {
+        log.info("Attepmt to getAllCotnracts with given contract");
         List<Contract> contracts = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement st = connection.prepareStatement("SELECT * FROM CONTRACT")) {
@@ -151,13 +160,14 @@ public class ContractManagerImpl implements ContractManager {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
         return contracts;
     }
 
     @Override
     public List<Contract> getActiveContracts() {
+        log.info("Attempt to getActiveContracts");
         List<Contract> active = new ArrayList<>();
         for (Contract c : getAllContracts()) {
             if (isActive(c)) {
@@ -174,6 +184,7 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public Date getEndDate(Contract contract) {
+        log.info("Attempt to getEndDate of given contract: "+contract.toString());
         Calendar cal = Calendar.getInstance();
         cal.setTime(contract.getStartDate());
         cal.add(Calendar.DATE, contract.getLength());
@@ -202,6 +213,7 @@ public class ContractManagerImpl implements ContractManager {
 
     @Override
     public List<Contract> getAllByAirship(Airship airship) {
+        log.info("Attempt to getAllByAirship with given airship: "+airship.toString());
         if (airship == null) {
             throw new IllegalArgumentException("Airship is null");
         }
@@ -223,7 +235,7 @@ public class ContractManagerImpl implements ContractManager {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ContractManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
 
         return out;

@@ -5,12 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
+import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * This class implements AirshipManager
  *
@@ -20,6 +22,7 @@ import java.util.logging.Logger;
 public class AirshipManagerImpl implements AirshipManager {
 
     private DataSource dataSource;
+    private final Logger log = LoggerFactory.getLogger(AirshipManagerImpl.class);
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -33,6 +36,7 @@ public class AirshipManagerImpl implements AirshipManager {
 
     @Override
     public void addAirship(Airship airship) {
+        
         checkDataSource();
         if (airship == null) {
             throw new IllegalArgumentException("Airship is null");
@@ -49,6 +53,8 @@ public class AirshipManagerImpl implements AirshipManager {
         if (airship.getCapacity() <= 0) {
             throw new IllegalArgumentException("Capacity is negative or zero");
         }
+        log.info("Attepmt to add airship given: "+airship.toString());
+        
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement st = connection.prepareStatement("INSERT INTO AIRSHIP ("
                     + "name, price, capacity) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
@@ -63,7 +69,7 @@ public class AirshipManagerImpl implements AirshipManager {
                 airship.setId(keyRS.getLong(1));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(AirshipManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
     }
 
@@ -87,6 +93,8 @@ public class AirshipManagerImpl implements AirshipManager {
         if (airship.getCapacity() <= 0) {
             throw new IllegalArgumentException("Capacity is negative or zero");
         }
+        log.info("Attempt to edit airship: "+airship.toString());
+        
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement st = connection.prepareStatement("UPDATE AIRSHIP SET "
                     + "name = ?, price = ?, capacity = ? WHERE ID = ?")) {
@@ -98,7 +106,7 @@ public class AirshipManagerImpl implements AirshipManager {
                 st.executeUpdate();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(AirshipManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
     }
 
@@ -110,18 +118,22 @@ public class AirshipManagerImpl implements AirshipManager {
         if (airship.getId() == null) {
             throw new IllegalArgumentException("Id is null");
         }
+        log.info("Attempt to remove airship: "+airship.toString());
+        
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement st = connection.prepareStatement("DELETE FROM AIRSHIP WHERE ID = ?")) {
                 st.setLong(1, airship.getId());
                 st.execute();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(AirshipManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
     }
 
     @Override
     public Airship getAirshipById(Long id) throws SQLException {
+        log.info("Attempt to get airship by id with given id: "+id.toString());
+        
         if (id == null) {
             throw new IllegalArgumentException("Id is null");
         }
@@ -135,7 +147,7 @@ public class AirshipManagerImpl implements AirshipManager {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(AirshipManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
         return airship;
 
@@ -143,6 +155,8 @@ public class AirshipManagerImpl implements AirshipManager {
 
     @Override
     public List<Airship> getAllAirships() {
+        log.info("Attempt to get all airships");
+        
         List<Airship> airships = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement st = connection.prepareStatement("SELECT ID,NAME,PRICE,CAPACITY FROM AIRSHIP")) {
@@ -152,7 +166,7 @@ public class AirshipManagerImpl implements AirshipManager {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(AirshipManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
         return airships;
 
@@ -160,6 +174,8 @@ public class AirshipManagerImpl implements AirshipManager {
 
     @Override
     public List<Airship> getAllAirshipsByCapacity(int capacity) {
+        log.info("Attempt to get all airships with higher or equal capacity, given: "+capacity);
+        
         List<Airship> airships = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement st = connection.prepareStatement(
@@ -171,13 +187,15 @@ public class AirshipManagerImpl implements AirshipManager {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(AirshipManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
         return airships;
     }
 
     @Override
     public List<Airship> getFreeAirships() {
+        log.info("Attempt to get all free airships");
+        
         List<Airship> free = new ArrayList<>();
         for (Airship airship : getAllAirships()) {
             if (!isRented(airship)) {
@@ -189,13 +207,15 @@ public class AirshipManagerImpl implements AirshipManager {
 
     @Override
     public boolean isRented(Airship airship) {
+        log.info("Attempt to trigger isRented method, given airship: "+airship.toString());
+        
         ContractManagerImpl cManager = null;
         try (Connection connection = dataSource.getConnection()) {
             cManager = new ContractManagerImpl();
             cManager.setDataSource(dataSource);
             
         } catch (SQLException ex) {
-            Logger.getLogger(AirshipManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.toString());
         }
         return (cManager.getActiveByAirship(airship) != null);
 

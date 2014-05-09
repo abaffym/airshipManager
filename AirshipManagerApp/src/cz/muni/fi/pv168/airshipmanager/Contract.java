@@ -17,8 +17,8 @@ public class Contract {
     private int length;
     private String nameOfClient;
     private Airship airship;
-    private float discount;
-    private PaymentMethod paymentMethod;
+    private float discount = 1.0f;
+    private PaymentMethod paymentMethod = PaymentMethod.CASH;
 
     public Contract setId(Long id) {
         this.id = id;
@@ -84,11 +84,7 @@ public class Contract {
     }
 
     public void isValid() throws IllegalArgumentException  {
-        
-        /*if(this.id == null){
-            throw new IllegalArgumentException("ID is null");
-        }
-        */
+        /*
         if(this.airship == null){
             throw new IllegalArgumentException("Airship is null");
         }
@@ -98,6 +94,7 @@ public class Contract {
         if(this.startDate == null){
             throw new IllegalArgumentException("Start Date is null");
         }
+                    */
     }
     
     @Override
