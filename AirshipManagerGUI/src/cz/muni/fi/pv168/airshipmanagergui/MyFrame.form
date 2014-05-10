@@ -557,6 +557,9 @@
                   <Connection code="bundle.getString(&quot;edit_contract&quot;)" type="code"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editContractButtonActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="addContractButton">
               <Properties>
@@ -574,6 +577,9 @@
                   <Connection code="bundle.getString(&quot;remove_contract&quot;)" type="code"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeContractButtonActionPerformed"/>
+              </Events>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane1">
               <AuxValues>

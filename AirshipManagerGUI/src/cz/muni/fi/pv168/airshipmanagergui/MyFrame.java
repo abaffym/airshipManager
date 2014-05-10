@@ -653,6 +653,11 @@ public class MyFrame extends javax.swing.JFrame {
         contractManagerLabel.setText(bundle.getString("contract_manager"));
 
         editContractButton.setText(bundle.getString("edit_contract"));
+        editContractButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editContractButtonActionPerformed(evt);
+            }
+        });
 
         addContractButton.setText(bundle.getString("add_contract"));
         addContractButton.addActionListener(new java.awt.event.ActionListener() {
@@ -662,6 +667,11 @@ public class MyFrame extends javax.swing.JFrame {
         });
 
         removeContractButton.setText(bundle.getString("remove_contract"));
+        removeContractButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeContractButtonActionPerformed(evt);
+            }
+        });
 
         jTable2.setModel(new ContractsTableModel()
         );
@@ -867,8 +877,42 @@ public class MyFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_addContractButtonActionPerformed
 
     private void updateContractSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateContractSaveButtonActionPerformed
-        // TODO add your handling code here:
+        updateContractFrame.setSize(400, 400);
+        updateContractFrame.setLocationRelativeTo(null);
+        updateContractFrame.setVisible(true);
     }//GEN-LAST:event_updateContractSaveButtonActionPerformed
+
+    private void editContractButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editContractButtonActionPerformed
+        updateContractFrame.setSize(400, 400);
+        updateContractFrame.setLocationRelativeTo(null);
+
+        int selectedRow = jTable2.getSelectedRow();
+        System.out.println("Selected row: "+selectedRow);
+        Object idValue = jTable2.getValueAt(selectedRow, 0);
+        Contract c = null;
+        try {
+            c = contractManager.getContractById((Long) idValue);
+        } catch (Exception ex) {
+            Logger.getLogger(MyFrame.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        }
+
+        update = false;
+        if(c.getStartDate() != null){
+            contractDateInput.setText(c.getStartDate().toString());
+        }
+        contractLengthInput.setText(((Integer) c.getLength()).toString());
+        contractClientInput.setText(c.getNameOfClient());
+        contractDiscountInput.setText(((Float) c.getDiscount()).toString());
+        contractAirshipInput.setSelectedIndex(1);
+        contractPaymentInput.setSelectedIndex(1);
+
+        updateContractFrame.setVisible(true);
+    }//GEN-LAST:event_editContractButtonActionPerformed
+
+    private void removeContractButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeContractButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_removeContractButtonActionPerformed
 
     /**
      * @param args the command line arguments
