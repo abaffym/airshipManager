@@ -441,6 +441,11 @@ public class MyFrame extends javax.swing.JFrame {
         contractPaymentLabel.setText("Payment method");
 
         updateContractSaveButton.setText("Save");
+        updateContractSaveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateContractSaveButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout updateContractFrameLayout = new javax.swing.GroupLayout(updateContractFrame.getContentPane());
         updateContractFrame.getContentPane().setLayout(updateContractFrameLayout);
@@ -856,8 +861,14 @@ public class MyFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_editAirshipButtonActionPerformed
 
     private void addContractButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addContractButtonActionPerformed
-        // TODO add your handling code here:
+       updateContractFrame.setSize(400, 400);
+       updateContractFrame.setLocationRelativeTo(null);
+       updateContractFrame.setVisible(true);
     }//GEN-LAST:event_addContractButtonActionPerformed
+
+    private void updateContractSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateContractSaveButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_updateContractSaveButtonActionPerformed
 
     /**
      * @param args the command line arguments
