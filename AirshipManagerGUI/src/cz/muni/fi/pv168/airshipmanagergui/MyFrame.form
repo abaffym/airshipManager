@@ -53,15 +53,15 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="contractLengthLabel" min="-2" pref="100" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <Component id="jScrollPane9" min="-2" pref="20" max="-2" attributes="0"/>
+                                      <Component id="jScrollPane9" min="-2" pref="26" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane10" min="-2" pref="20" max="-2" attributes="0"/>
+                                      <Component id="jScrollPane10" min="-2" pref="32" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane13" pref="58" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane13" min="-2" pref="46" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="jScrollPane11" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane11" min="-2" pref="110" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -193,23 +193,22 @@
         </Component>
         <Component class="javax.swing.JComboBox" name="contractAirshipInput">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="/*&#xa;List&lt;Contract&gt; all = contractManager.getAllContracts();&#xa;for(Contract c:all){&#xa;    contractAirshipInput.addItem(c.getAirship().getName());&#xa;}&#xa;*/&#xa;contractAirshipInput.setModel(new javax.swing.DefaultComboBoxModel(new String[] { &quot;Item 1&quot;, &quot;Item 2&quot;, &quot;Item 3&quot;, &quot;Item 4&quot; }));"/>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="/*&#xa;if(contractManager == null){&#xa;for(Contract c: contractManager.getAllContracts()){&#xa;    contractAirshipInput.addItem(c.getAirship().getName());&#xa;}&#xa;}&#xa;*/"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="contractAirshipInput.setModel(new javax.swing.DefaultComboBoxModel(new String[0]));"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="contractPaymentInput">
           <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="Item 1"/>
-                <StringItem index="1" value="Item 2"/>
-                <StringItem index="2" value="Item 3"/>
-                <StringItem index="3" value="Item 4"/>
-              </StringArray>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="new javax.swing.DefaultComboBoxModel(new String[] {})" type="code"/>
             </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="contractPaymentInputActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="for(PaymentMethod p: PaymentMethod.values()){&#xa;    contractPaymentInput.addItem(p);&#xa;}"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="contractPaymentLabel">
           <Properties>
