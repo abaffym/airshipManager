@@ -425,29 +425,29 @@ public class MyFrame extends javax.swing.JFrame {
             }
         });
 
-        updateContractLabel.setText("Add / Edit Contract");
+        updateContractLabel.setText(bundle.getString("contract_window_label"));
 
         jScrollPane11.setViewportView(contractLengthInput);
 
-        contractLengthLabel.setText("Length");
+        contractLengthLabel.setText(bundle.getString("cTable.length"));
 
-        contractClientLabel.setText("Client Name");
+        contractClientLabel.setText(bundle.getString("cTable.client"));
 
         jScrollPane8.setViewportView(contractClientInput);
 
         jScrollPane12.setViewportView(contractDiscountInput);
 
-        contractDiscountLabel.setText("Discount");
+        contractDiscountLabel.setText(bundle.getString("cTable.discount"));
 
-        contractAirshipLabel.setText("Airship");
+        contractAirshipLabel.setText(bundle.getString("cTable.airship"));
 
         contractAirshipInput.setModel(new javax.swing.DefaultComboBoxModel(new String[0]));
 
         contractPaymentInput.setModel(new javax.swing.DefaultComboBoxModel(new String[] {}));
 
-        contractPaymentLabel.setText("Payment method");
+        contractPaymentLabel.setText(bundle.getString("cTable.payment"));
 
-        updateContractSaveButton.setText("Save");
+        updateContractSaveButton.setText(bundle.getString("save"));
         updateContractSaveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 updateContractSaveButtonActionPerformed(evt);
@@ -536,13 +536,13 @@ public class MyFrame extends javax.swing.JFrame {
             contractPaymentInput.addItem(p);
         }
 
-        updateAirshipLabel.setText("Add / Edit Airship");
+        updateAirshipLabel.setText(bundle.getString("airship_window_label"));
 
-        airshipNameLabel.setText("Name");
+        airshipNameLabel.setText(bundle.getString("aTable.name"));
 
-        airshipCapacityLabel.setText("Capacity");
+        airshipCapacityLabel.setText(bundle.getString("aTable.capacity"));
 
-        airshipPriceLabel.setText("Price");
+        airshipPriceLabel.setText(bundle.getString("aTable.price"));
 
         jScrollPane15.setViewportView(airshipNameInput);
 
@@ -550,7 +550,7 @@ public class MyFrame extends javax.swing.JFrame {
 
         jScrollPane17.setViewportView(airshipCapacityInput);
 
-        updateAirshipSaveButton.setText("Save");
+        updateAirshipSaveButton.setText(bundle.getString("save"));
         updateAirshipSaveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 updateAirshipSaveButtonActionPerformed(evt);
