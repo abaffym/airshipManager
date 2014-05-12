@@ -5,8 +5,8 @@
 package cz.muni.fi.pv168.airshipmanagergui;
 
 import cz.muni.fi.pv168.airshipmanager.Contract;
+import cz.muni.fi.pv168.airshipmanager.Airship;
 import cz.muni.fi.pv168.airshipmanager.PaymentMethod;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -105,7 +105,7 @@ public class ContractsTableModel extends AbstractTableModel {
                 contract.setNameOfClient((String) aValue);
                 break;
             case 2:
-               // contract.set;
+                contract.setAirship((Airship) getValueAt(rowIndex, columnIndex));
                 break;
             case 3:
                 contract.setStartDate((java.sql.Date) aValue);
