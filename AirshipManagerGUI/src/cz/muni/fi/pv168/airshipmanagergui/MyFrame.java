@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -25,6 +27,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 /**
  *
  * @author Marek
+ * @author Michal
  */
 public class MyFrame extends javax.swing.JFrame {
 
@@ -32,7 +35,9 @@ public class MyFrame extends javax.swing.JFrame {
     private AirshipManagerImpl airshipManager;
     private ContractManagerImpl contractManager;
     private Boolean update = false;
+    private boolean updateC = false;
     private Long updateId;
+    private Long updateIdC;
 
     /**
      * Creates new form MyFrame
@@ -287,7 +292,14 @@ public class MyFrame extends javax.swing.JFrame {
             contract.setPaymentMethod(paymentMethod);
             contract.setLength(length);
             contract.setNameOfClient(nameOfClient);
-            contractManager.addContract(contract);
+            
+            if (update == false) {
+                contractManager.addContract(contract);
+            } else {
+                Contract c = new Contract().setId(updateIdC);
+                contractManager.editContract(c);
+            }
+
             return contract;
         }
 
@@ -425,6 +437,11 @@ public class MyFrame extends javax.swing.JFrame {
 
         updateContractFrame.setAlwaysOnTop(true);
         updateContractFrame.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        updateContractFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                updateContractFrameWindowOpened(evt);
+            }
+        });
 
         updateContractLabel.setText("Add / Edit Contract");
 
@@ -502,13 +519,14 @@ public class MyFrame extends javax.swing.JFrame {
                             .addComponent(contractLengthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(updateContractFrameLayout.createSequentialGroup()
-                                    .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jScrollPane13, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                    .addComponent(jScrollPane13, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
         );
         updateContractFrameLayout.setVerticalGroup(
             updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -912,10 +930,9 @@ public class MyFrame extends javax.swing.JFrame {
         updateContractFrame.setSize(400, 400);
         updateContractFrame.setLocationRelativeTo(null);
         updateContractFrame.setVisible(true);
+        
+        updateC = false;
 
-        for (Airship a: airshipManager.getAllAirships()) {
-            contractAirshipInput.addItem(a);
-        }
     }//GEN-LAST:event_addContractButtonActionPerformed
 
     private void editContractButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editContractButtonActionPerformed
@@ -933,7 +950,6 @@ public class MyFrame extends javax.swing.JFrame {
             throw ex;
         }
 
-        update = false;
         if (c.getStartDate() != null) {
             contractDateInput3.setText(Integer.toString(c.getStartDate().getDay()));
             contractDateInput2.setText(Integer.toString(c.getStartDate().getMonth()));
@@ -942,9 +958,12 @@ public class MyFrame extends javax.swing.JFrame {
         contractLengthInput.setText(((Integer) c.getLength()).toString());
         contractClientInput.setText(c.getNameOfClient());
         contractDiscountInput.setText(((Float) c.getDiscount()).toString());
-        contractAirshipInput.setSelectedIndex(1);
-        contractPaymentInput.setSelectedIndex(1);
-
+        updateIdC = c.getId();
+        updateC = true;
+        /*
+         contractAirshipInput.setSelectedIndex(1);
+         contractPaymentInput.setSelectedIndex(1);
+         */
         updateContractFrame.setVisible(true);
     }//GEN-LAST:event_editContractButtonActionPerformed
 
@@ -979,13 +998,14 @@ public class MyFrame extends javax.swing.JFrame {
     private void updateContractSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateContractSaveButtonActionPerformed
         java.sql.Date date = null;
         Float discount = null;
-
+        Calendar inputCal;
         /*
          Date must be well formated
          */
         try {
-            date = new java.sql.Date(Integer.parseInt(contractDateInput3.getText()),
-                        Integer.parseInt(contractDateInput2.getText()), Integer.parseInt(contractDateInput1.getText()));
+            inputCal = new GregorianCalendar(Integer.parseInt(contractDateInput3.getText()),
+                        Integer.parseInt(contractDateInput2.getText())-1, Integer.parseInt(contractDateInput1.getText()));
+            date = new Date(inputCal.getTimeInMillis());
         } catch (NumberFormatException ex) {
             java.util.logging.Logger.getLogger(MyFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
@@ -1007,7 +1027,16 @@ public class MyFrame extends javax.swing.JFrame {
 
         Airship selectedAirship = (Airship) contractAirshipInput.getSelectedItem();
         PaymentMethod selectedPayment = (PaymentMethod) contractPaymentInput.getSelectedItem();
-
+        
+        //Debug:
+        System.out.println("Input parse:");
+        System.out.println(discount);
+        System.out.println(length);
+        System.out.println(clientName);
+        System.out.println(date);
+        System.out.println(selectedAirship);
+        System.out.println(selectedPayment);
+        
         addContractSwingWorker = new MyFrame.AddContractSwingWorker();
         addContractSwingWorker.setDiscount(discount);
         addContractSwingWorker.setLength(length);
@@ -1016,18 +1045,29 @@ public class MyFrame extends javax.swing.JFrame {
         addContractSwingWorker.setAirship(selectedAirship);
         addContractSwingWorker.setPaymentMethod(selectedPayment);
 
-        if (addContractSwingWorker.isValid()) {
-            addContractSwingWorker.execute();
-            updateContractFrame.dispose();
-
+        if (!addContractSwingWorker.isValid()) {
+            String msg2 = java.util.ResourceBundle.getBundle(
+                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("wrongAddContract");
+            JOptionPane.showMessageDialog(this, msg2);
+            return;
         }
 
-        new AllAirshipSwingWorker().execute();
+        addContractSwingWorker.execute();
+        updateContractFrame.dispose();
+
+        new AllContractsSwingWorker().execute();
     }//GEN-LAST:event_updateContractSaveButtonActionPerformed
 
     private void contractPaymentInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contractPaymentInputActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_contractPaymentInputActionPerformed
+
+    private void updateContractFrameWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_updateContractFrameWindowOpened
+        //Airship selection load:
+        for (Airship a : airshipManager.getAllAirships()) {
+            contractAirshipInput.addItem(a);
+        }
+    }//GEN-LAST:event_updateContractFrameWindowOpened
 
     /**
      * @param args the command line arguments
