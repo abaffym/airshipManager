@@ -293,7 +293,7 @@ public class MyFrame extends javax.swing.JFrame {
             contract.setLength(length);
             contract.setNameOfClient(nameOfClient);
             
-            if (update == false) {
+            if (updateC == false) {
                 contractManager.addContract(contract);
             } else {
                 Contract c = new Contract().setId(updateIdC);
@@ -493,40 +493,42 @@ public class MyFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(updateContractFrameLayout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addComponent(updateContractSaveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(updateContractFrameLayout.createSequentialGroup()
                         .addGroup(updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(contractAirshipLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(contractPaymentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(contractAirshipInput, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(contractPaymentInput, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(updateContractFrameLayout.createSequentialGroup()
+                                .addGroup(updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(contractAirshipLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(contractPaymentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(contractAirshipInput, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(contractPaymentInput, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(updateContractFrameLayout.createSequentialGroup()
+                                .addComponent(contractClientLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane8))
+                            .addGroup(updateContractFrameLayout.createSequentialGroup()
+                                .addComponent(contractDiscountLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane12)))
                         .addContainerGap())
                     .addGroup(updateContractFrameLayout.createSequentialGroup()
-                        .addComponent(contractDiscountLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(contractDateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(updateContractLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, updateContractFrameLayout.createSequentialGroup()
-                            .addComponent(contractClientLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jScrollPane8))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, updateContractFrameLayout.createSequentialGroup()
-                            .addComponent(contractLengthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(updateContractFrameLayout.createSequentialGroup()
-                                    .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jScrollPane13, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addGroup(updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(updateContractFrameLayout.createSequentialGroup()
+                                .addGap(37, 37, 37)
+                                .addComponent(updateContractSaveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(contractDateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jScrollPane13, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(updateContractLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(updateContractFrameLayout.createSequentialGroup()
+                                .addComponent(contractLengthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                                    .addComponent(jScrollPane11))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 12, Short.MAX_VALUE))))
         );
         updateContractFrameLayout.setVerticalGroup(
             updateContractFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -995,22 +997,29 @@ public class MyFrame extends javax.swing.JFrame {
         new AllAirshipSwingWorker().execute();
     }//GEN-LAST:event_removeContractButtonActionPerformed
 
+    private void updateContractFrameWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_updateContractFrameWindowOpened
+        //Airship selection load:
+        for (Airship a : airshipManager.getAllAirships()) {
+            contractAirshipInput.addItem(a);
+        }
+    }//GEN-LAST:event_updateContractFrameWindowOpened
+
     private void updateContractSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateContractSaveButtonActionPerformed
         java.sql.Date date = null;
         Float discount = null;
         Calendar inputCal;
         /*
-         Date must be well formated
-         */
+        Date must be well formated
+        */
         try {
             inputCal = new GregorianCalendar(Integer.parseInt(contractDateInput3.getText()),
-                        Integer.parseInt(contractDateInput2.getText())-1, Integer.parseInt(contractDateInput1.getText()));
+                Integer.parseInt(contractDateInput2.getText())-1, Integer.parseInt(contractDateInput1.getText()));
             date = new Date(inputCal.getTimeInMillis());
         } catch (NumberFormatException ex) {
             java.util.logging.Logger.getLogger(MyFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
             String msg1 = java.util.ResourceBundle.getBundle(
-                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("wrongDate");
+                "cz.muni.fi.pv168.airshipmanagergui/localization").getString("wrongDate");
             JOptionPane.showMessageDialog(this, msg1);
         }
         int length = Integer.parseInt(contractLengthInput.getText());
@@ -1021,13 +1030,13 @@ public class MyFrame extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(MyFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
             String msg1 = java.util.ResourceBundle.getBundle(
-                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("wrongLength");
+                "cz.muni.fi.pv168.airshipmanagergui/localization").getString("wrongLength");
             JOptionPane.showMessageDialog(this, msg1);
         }
 
         Airship selectedAirship = (Airship) contractAirshipInput.getSelectedItem();
         PaymentMethod selectedPayment = (PaymentMethod) contractPaymentInput.getSelectedItem();
-        
+
         //Debug:
         System.out.println("Input parse:");
         System.out.println(discount);
@@ -1036,7 +1045,7 @@ public class MyFrame extends javax.swing.JFrame {
         System.out.println(date);
         System.out.println(selectedAirship);
         System.out.println(selectedPayment);
-        
+
         addContractSwingWorker = new MyFrame.AddContractSwingWorker();
         addContractSwingWorker.setDiscount(discount);
         addContractSwingWorker.setLength(length);
@@ -1047,7 +1056,7 @@ public class MyFrame extends javax.swing.JFrame {
 
         if (!addContractSwingWorker.isValid()) {
             String msg2 = java.util.ResourceBundle.getBundle(
-                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("wrongAddContract");
+                "cz.muni.fi.pv168.airshipmanagergui/localization").getString("wrongAddContract");
             JOptionPane.showMessageDialog(this, msg2);
             return;
         }
@@ -1061,13 +1070,6 @@ public class MyFrame extends javax.swing.JFrame {
     private void contractPaymentInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contractPaymentInputActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_contractPaymentInputActionPerformed
-
-    private void updateContractFrameWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_updateContractFrameWindowOpened
-        //Airship selection load:
-        for (Airship a : airshipManager.getAllAirships()) {
-            contractAirshipInput.addItem(a);
-        }
-    }//GEN-LAST:event_updateContractFrameWindowOpened
 
     /**
      * @param args the command line arguments
