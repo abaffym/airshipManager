@@ -764,14 +764,14 @@ public class MyFrame extends javax.swing.JFrame {
         BigDecimal pricePerDayBigDecimal = BigDecimal.ZERO;
 
         String msgName = java.util.ResourceBundle.getBundle(
-                "cz.muni.fi.pv168.airshipmanagergui/localization").getString("msgName");
+                    "cz.muni.fi.pv168.airshipmanagergui/localization").getString("msgName");
         String msgCapacity = java.util.ResourceBundle.getBundle(
-                "cz.muni.fi.pv168.airshipmanagergui/localization").getString("msgCapacity");
+                    "cz.muni.fi.pv168.airshipmanagergui/localization").getString("msgCapacity");
         String msgPricePerDay = java.util.ResourceBundle.getBundle(
-                "cz.muni.fi.pv168.airshipmanagergui/localization").getString("msgPricePerDay");
+                    "cz.muni.fi.pv168.airshipmanagergui/localization").getString("msgPricePerDay");
 
         if (name == null || "".equals(name)) {
-            JOptionPane.showMessageDialog(this, name);
+            JOptionPane.showMessageDialog(this, msgName);
             airshipNameLabel.setForeground(Color.red);
             nameB = true;
         } else {
@@ -826,53 +826,53 @@ public class MyFrame extends javax.swing.JFrame {
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow == -1) {
             String err = java.util.ResourceBundle.getBundle(
-                    "cz.muni.fi.pv168.airshipmanagergui/localization").getString("noSelectedAirship");
+                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("noSelectedAirship");
             JOptionPane.showMessageDialog(this, err);
         } else {
-        Object idValue = jTable1.getValueAt(selectedRow, 0);
-        Airship airship = null;
-        try {
-            airship = airshipManager.getAirshipById((Long) idValue);
-        } catch (SQLException ex) {
-            Logger.getLogger(MyFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        boolean remove = false;
-        if (selectedRow == -1) {
-            return;
-        }
-
-        String msg = java.util.ResourceBundle.getBundle(
-                "cz.muni.fi.pv168.airshipmanagergui/localization").getString("removeAirshipMsg");
-        String title = java.util.ResourceBundle.getBundle(
-                "cz.muni.fi.pv168.airshipmanagergui/localization").getString("removeAirshipTitle");
-        int popUp = JOptionPane.showConfirmDialog(this, msg, title,
-                JOptionPane.YES_NO_OPTION);
-
-        remove = true;
-        for (Airship a : airshipManager.getFreeAirships()) {
-            if (a.equals(airship)) {
-                remove = false;
-                break;
+            Object idValue = jTable1.getValueAt(selectedRow, 0);
+            Airship airship = null;
+            try {
+                airship = airshipManager.getAirshipById((Long) idValue);
+            } catch (SQLException ex) {
+                Logger.getLogger(MyFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        if (!remove) {
-            if (popUp == JOptionPane.YES_OPTION) {
-                airshipManager.removeAirship(airship);
+            boolean remove = false;
+            if (selectedRow == -1) {
+                return;
             }
-        } else {
-            String msg1 = java.util.ResourceBundle.getBundle(
-                    "cz.muni.fi.pv168.airshipmanagergui/localization").getString("removingAirship");
-            JOptionPane.showMessageDialog(this, msg1);
+
+            String msg = java.util.ResourceBundle.getBundle(
+                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("removeAirshipMsg");
+            String title = java.util.ResourceBundle.getBundle(
+                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("removeAirshipTitle");
+            int popUp = JOptionPane.showConfirmDialog(this, msg, title,
+                        JOptionPane.YES_NO_OPTION);
+
+            remove = true;
+            for (Airship a : airshipManager.getFreeAirships()) {
+                if (a.equals(airship)) {
+                    remove = false;
+                    break;
+                }
+            }
+            if (!remove) {
+                if (popUp == JOptionPane.YES_OPTION) {
+                    airshipManager.removeAirship(airship);
+                }
+            } else {
+                String msg1 = java.util.ResourceBundle.getBundle(
+                            "cz.muni.fi.pv168.airshipmanagergui/localization").getString("removingAirship");
+                JOptionPane.showMessageDialog(this, msg1);
+            }
+            new AllAirshipSwingWorker().execute();
         }
-        new AllAirshipSwingWorker().execute();
-    }
     }//GEN-LAST:event_removeAirshipButtonActionPerformed
 
     private void editAirshipButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editAirshipButtonActionPerformed
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow == -1) {
             String err = java.util.ResourceBundle.getBundle(
-                    "cz.muni.fi.pv168.airshipmanagergui/localization").getString("noSelectedAirship");
+                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("noSelectedAirship");
             JOptionPane.showMessageDialog(this, err);
         } else {
             updateAirshipFrame.setSize(400, 400);
@@ -907,7 +907,7 @@ public class MyFrame extends javax.swing.JFrame {
         int selectedRow = jTable2.getSelectedRow();
         if (selectedRow == -1) {
             String err = java.util.ResourceBundle.getBundle(
-                    "cz.muni.fi.pv168.airshipmanagergui/localization").getString("noSelectedContract");
+                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("noSelectedContract");
             JOptionPane.showMessageDialog(this, err);
         } else {
             updateContractFrame.setSize(400, 400);
@@ -937,7 +937,7 @@ public class MyFrame extends javax.swing.JFrame {
 
         if (selectedRow == -1) {
             String err = java.util.ResourceBundle.getBundle(
-                    "cz.muni.fi.pv168.airshipmanagergui/localization").getString("noSelectedContract");
+                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("noSelectedContract");
             JOptionPane.showMessageDialog(this, err);
         } else {
             Object idValue = jTable2.getValueAt(selectedRow, 0);
@@ -953,11 +953,11 @@ public class MyFrame extends javax.swing.JFrame {
             }
 
             String msg = java.util.ResourceBundle.getBundle(
-                    "cz.muni.fi.pv168.airshipmanagergui/localization").getString("removeAirshipMsg");
+                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("removeAirshipMsg");
             String title = java.util.ResourceBundle.getBundle(
-                    "cz.muni.fi.pv168.airshipmanagergui/localization").getString("removeAirshipTitle");
+                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("removeAirshipTitle");
             int popUp = JOptionPane.showConfirmDialog(this, msg, title,
-                    JOptionPane.YES_NO_OPTION);
+                        JOptionPane.YES_NO_OPTION);
 
             if (popUp == JOptionPane.YES_OPTION) {
                 contractManager.removeContract(c);
@@ -976,10 +976,18 @@ public class MyFrame extends javax.swing.JFrame {
     private void updateContractSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateContractSaveButtonActionPerformed
         java.sql.Date date = null;
         Float discount = null;
+        int length = -1;
 
         date = getSqlDate(Calendar.getInstance().getTime(), 0);
+        try {
+            length = Integer.parseInt(contractLengthInput.getText());
+        } catch (java.lang.NumberFormatException ex) {
+            java.util.logging.Logger.getLogger(MyFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-        int length = Integer.parseInt(contractLengthInput.getText());
+            String msg = java.util.ResourceBundle.getBundle(
+                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("wrongLength");
+            JOptionPane.showMessageDialog(this, msg);
+        }
         String clientName = contractClientInput.getText();
         try {
             discount = Float.parseFloat(contractDiscountInput.getText());
@@ -987,7 +995,7 @@ public class MyFrame extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(MyFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
             String msg1 = java.util.ResourceBundle.getBundle(
-                    "cz.muni.fi.pv168.airshipmanagergui/localization").getString("wrongLength");
+                        "cz.muni.fi.pv168.airshipmanagergui/localization").getString("wrongDiscount");
             JOptionPane.showMessageDialog(this, msg1);
         }
 
