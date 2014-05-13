@@ -442,6 +442,11 @@ public class MyFrame extends javax.swing.JFrame {
         contractAirshipLabel.setText(bundle.getString("cTable.airship"));
 
         contractAirshipInput.setModel(new javax.swing.DefaultComboBoxModel(new String[0]));
+        contractAirshipInput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                contractAirshipInputActionPerformed(evt);
+            }
+        });
 
         contractPaymentInput.setModel(new javax.swing.DefaultComboBoxModel(new String[] {}));
 
@@ -968,7 +973,7 @@ public class MyFrame extends javax.swing.JFrame {
 
     private void updateContractFrameWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_updateContractFrameWindowOpened
         //Airship selection load:
-        for (Airship a : airshipManager.getAllAirships()) {
+        for (Airship a : airshipManager.getFreeAirships()) {
             contractAirshipInput.addItem(a);
         }
     }//GEN-LAST:event_updateContractFrameWindowOpened
@@ -1030,6 +1035,10 @@ public class MyFrame extends javax.swing.JFrame {
 
         new AllContractsSwingWorker().execute();
     }//GEN-LAST:event_updateContractSaveButtonActionPerformed
+
+    private void contractAirshipInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contractAirshipInputActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_contractAirshipInputActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

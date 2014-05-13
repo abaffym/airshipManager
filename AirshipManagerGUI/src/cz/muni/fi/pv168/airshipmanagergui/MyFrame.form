@@ -179,6 +179,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="contractAirshipInput">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="contractAirshipInputActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="/*&#xa;if(contractManager == null){&#xa;for(Contract c: contractManager.getAllContracts()){&#xa;    contractAirshipInput.addItem(c.getAirship().getName());&#xa;}&#xa;}&#xa;*/"/>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="contractAirshipInput.setModel(new javax.swing.DefaultComboBoxModel(new String[0]));"/>
