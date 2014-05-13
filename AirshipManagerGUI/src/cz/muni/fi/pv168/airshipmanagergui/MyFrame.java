@@ -963,7 +963,7 @@ public class MyFrame extends javax.swing.JFrame {
                 contractManager.removeContract(c);
             }
         }
-        new AllAirshipSwingWorker().execute();
+        new AllContractsSwingWorker().execute();
     }//GEN-LAST:event_removeContractButtonActionPerformed
 
     private void updateContractFrameWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_updateContractFrameWindowOpened
